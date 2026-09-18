@@ -210,7 +210,7 @@ function initEvents() {
     actions.className = "event-card__actions";
 
     const mapBtn = document.createElement("a");
-    mapBtn.className = "btn btn--ghost btn--sm";
+    mapBtn.className = "btn btn--primary btn--sm";
     mapBtn.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${ev.venue}, ${ev.address}`)}`;
     mapBtn.target = "_blank";
     mapBtn.rel = "noopener";
