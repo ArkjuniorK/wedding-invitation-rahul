@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 1300" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Botanical cover artwork">
+  <defs>
+    <linearGradient id="covA" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f7f2e8"/><stop offset=".55" stop-color="#e9dfcc"/><stop offset="1" stop-color="#d9cbb0"/>
+    </linearGradient>
+    <linearGradient id="covLeaf" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#7a8464"/><stop offset="1" stop-color="#55604a"/>
+    </linearGradient>
+    <linearGradient id="covRose" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#d8b2a6"/><stop offset="1" stop-color="#b98a80"/>
+    </linearGradient>
+    <filter id="grain"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" stitchTiles="stitch"/><feColorMatrix type="matrix" values="0 0 0 0 .45 0 0 0 0 .4 0 0 0 0 .32 0 0 0 .05 0"/></filter>
+  </defs>
+  <rect width="900" height="1300" fill="url(#covA)"/>
+  <!-- distant soft foliage -->
+  <g opacity=".35" fill="url(#covLeaf)">
+    <path d="M-40 300 Q120 160 320 210 Q180 300 60 340 Z"/>
+    <path d="M900 260 Q760 130 560 190 Q700 280 840 320 Z"/>
+  </g>
+  <!-- arch frame -->
+  <path d="M240 1300 V560 A210 210 0 0 1 660 560 V1300 Z" fill="#f3ecdd" opacity=".55"/>
+  <path d="M240 1300 V560 A210 210 0 0 1 660 560 V1300" fill="none" stroke="#8a6f52" stroke-width="1.5" opacity=".6"/>
+  <path d="M262 1300 V562 A188 188 0 0 1 638 562 V1300" fill="none" stroke="#8a6f52" stroke-width=".8" opacity=".45"/>
+  <!-- botanical left column -->
+  <g stroke="#5d684f" stroke-width="2" fill="none" opacity=".8">
+    <path d="M150 120 Q210 320 130 560 Q210 640 190 820 Q150 980 220 1160"/>
+    <path d="M150 220 Q200 240 236 212 M148 330 Q205 352 244 322 M138 460 Q196 486 238 452 M146 600 Q200 626 240 592 M152 730 Q208 758 246 722 M148 880 Q206 906 246 872"/>
+  </g>
+  <g stroke="#7a8464" stroke-width="1.4" fill="none" opacity=".7">
+    <path d="M120 100 Q150 200 118 320 M118 420 Q150 520 120 640 M124 700 Q152 800 122 930 M126 980 Q152 1080 124 1180"/>
+  </g>
+  <g fill="url(#covLeaf)" opacity=".85">
+    <ellipse cx="236" cy="212" rx="16" ry="7" transform="rotate(-18 236 212)"/>
+    <ellipse cx="244" cy="322" rx="17" ry="7" transform="rotate(-15 244 322)"/>
+    <ellipse cx="240" cy="592" rx="16" ry="7" transform="rotate(-14 240 592)"/>
+    <ellipse cx="246" cy="722" rx="15" ry="7" transform="rotate(-16 246 722)"/>
+    <ellipse cx="246" cy="872" rx="16" ry="7" transform="rotate(-13 246 872)"/>
+  </g>
+  <!-- botanical right column -->
+  <g stroke="#5d684f" stroke-width="2" fill="none" opacity=".8">
+    <path d="M760 140 Q690 340 780 560 Q690 660 716 840 Q760 1000 690 1170"/>
+    <path d="M760 240 Q710 262 676 232 M762 350 Q706 372 668 340 M772 470 Q716 496 674 462 M760 610 Q708 636 668 602 M756 740 Q702 766 666 730 M758 900 Q702 926 664 892"/>
+  </g>
+  <g fill="url(#covLeaf)" opacity=".85">
+    <ellipse cx="676" cy="232" rx="16" ry="7" transform="rotate(18 676 232)"/>
+    <ellipse cx="668" cy="340" rx="17" ry="7" transform="rotate(15 668 340)"/>
+    <ellipse cx="668" cy="602" rx="16" ry="7" transform="rotate(14 668 602)"/>
+    <ellipse cx="666" cy="730" rx="15" ry="7" transform="rotate(16 666 730)"/>
+  </g>
+  <!-- dusty rose sprigs -->
+  <g opacity=".75">
+    <g stroke="#b98a80" stroke-width="1.6" fill="none">
+      <path d="M300 940 Q340 1000 320 1080 M600 960 Q566 1020 588 1100"/>
+    </g>
+    <circle cx="320" cy="1084" r="7" fill="url(#covRose)"/>
+    <circle cx="306" cy="1052" r="5" fill="url(#covRose)"/>
+    <circle cx="332" cy="1020" r="4.5" fill="url(#covRose)"/>
+    <circle cx="588" cy="1104" r="7" fill="url(#covRose)"/>
+    <circle cx="600" cy="1070" r="5" fill="url(#covRose)"/>
+    <circle cx="578" cy="1040" r="4.5" fill="url(#covRose)"/>
+  </g>
+  <rect width="900" height="1300" filter="url(#grain)" opacity=".5"/>
+  <!-- corner ornament lines -->
+  <g stroke="#8a6f52" stroke-width="1" fill="none" opacity=".55">
+    <path d="M60 60 H200 M60 60 V180 M840 60 H700 M840 60 V180 M60 1240 H200 M60 1240 V1120 M840 1240 H700 M840 1240 V1120"/>
+  </g>
+</svg>

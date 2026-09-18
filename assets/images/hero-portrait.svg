@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1250" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Hero couple portrait artwork">
+  <defs>
+    <linearGradient id="hpBg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#efe6d4"/><stop offset="1" stop-color="#dbcdb2"/>
+    </linearGradient>
+    <linearGradient id="hpTone" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#c9a98e"/><stop offset="1" stop-color="#9a7a5f"/>
+    </linearGradient>
+    <linearGradient id="hpSuit" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#4a4238"/><stop offset="1" stop-color="#332c24"/>
+    </linearGradient>
+    <linearGradient id="hpGown" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#fbf7ee"/><stop offset="1" stop-color="#e2d5bb"/>
+    </linearGradient>
+    <linearGradient id="hpLeaf" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#8a9172"/><stop offset="1" stop-color="#5d684f"/>
+    </linearGradient>
+    <filter id="hpGrain"><feTurbulence type="fractalNoise" baseFrequency=".85" numOctaves="2" stitchTiles="stitch"/><feColorMatrix type="matrix" values="0 0 0 0 .4 0 0 0 0 .36 0 0 0 0 .28 0 0 0 .05 0"/></filter>
+  </defs>
+  <rect width="1000" height="1250" fill="url(#hpBg)"/>
+  <!-- arched niche -->
+  <path d="M180 1250 V520 A320 320 0 0 1 820 520 V1250 Z" fill="#f6f0e2"/>
+  <path d="M180 1250 V520 A320 320 0 0 1 820 520 V1250" fill="none" stroke="#8a6f52" stroke-width="1.6" opacity=".6"/>
+  <path d="M204 1250 V522 A296 296 0 0 1 796 522 V1250" fill="none" stroke="#8a6f52" stroke-width=".8" opacity=".4"/>
+  <!-- couple silhouettes -->
+  <g>
+    <!-- groom -->
+    <path d="M560 1250 V860 Q560 780 640 780 Q720 780 720 860 V1250 Z" fill="url(#hpSuit)"/>
+    <circle cx="640" cy="700" r="86" fill="url(#hpTone)"/>
+    <path d="M640 612 q-80 4 -84 92 q30 -56 84 -56 q54 0 84 56 q-4 -88 -84 -92" fill="#3a332b"/>
+    <path d="M600 810 q40 26 80 0 l-10 40 q-30 14 -60 0 Z" fill="#f7f2e8"/>
+    <path d="M622 826 h36 v34 h-36 Z" fill="#8a6f52"/>
+    <path d="M630 826 h20 v44 q-10 8 -20 0 Z" fill="#b98a80"/>
+    <!-- bride -->
+    <path d="M300 1250 V880 Q300 786 402 786 Q504 786 504 880 V1250 Z" fill="url(#hpGown)"/>
+    <path d="M330 1000 Q300 1120 320 1250 M470 1000 Q500 1120 480 1250" stroke="#d8c8ab" stroke-width="3" fill="none"/>
+    <circle cx="402" cy="702" r="82" fill="url(#hpTone)"/>
+    <path d="M402 616 q-86 6 -90 104 q22 -40 48 -52 q-8 26 4 40 q-2 -44 38 -52 q40 8 38 52 q12 -14 4 -40 q26 12 48 52 q-4 -98 -90 -104" fill="#6b4f3a"/>
+    <path d="M314 726 q-14 90 22 150 q-30 -110 10 -170 Z M490 726 q14 90 -22 150 q30 -110 -10 -170 Z" fill="#6b4f3a"/>
+    <path d="M348 1006 L402 950 L456 1006 L448 1060 L356 1060 Z" fill="#fbf7ee" stroke="#d8c8ab" stroke-width="2"/>
+    <circle cx="402" cy="942" r="12" fill="#e8ddc6" stroke="#b98a80" stroke-width="2"/>
+    <!-- joined hands -->
+    <path d="M504 960 Q540 940 560 950 L560 990 Q530 996 504 986 Z" fill="url(#hpTone)"/>
+  </g>
+  <!-- botanical sides -->
+  <g fill="url(#hpLeaf)" opacity=".9">
+    <path d="M60 1250 Q40 1000 100 800 Q160 980 130 1250 Z"/>
+    <path d="M940 1250 Q960 1000 900 800 Q840 980 870 1250 Z"/>
+  </g>
+  <g stroke="#55604a" stroke-width="2" fill="none" opacity=".8">
+    <path d="M95 1230 Q120 1050 96 860 M905 1230 Q880 1050 904 860"/>
+    <path d="M96 1160 Q140 1140 170 1152 M916 1160 Q860 1140 830 1152 M96 1040 Q142 1020 172 1032 M916 1040 Q858 1020 828 1032 M96 930 Q138 910 168 922 M916 930 Q862 910 832 922"/>
+  </g>
+  <g fill="#d8b2a6" opacity=".8">
+    <circle cx="172" cy="1152" r="6"/><circle cx="828" cy="1152" r="6"/><circle cx="168" cy="922" r="5"/><circle cx="832" cy="922" r="5"/>
+  </g>
+  <rect width="1000" height="1250" filter="url(#hpGrain)" opacity=".5"/>
+</svg>

@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 760" preserveAspectRatio="xMidYMid slice" role="img" aria-label="Portrait of the bride">
+  <defs>
+    <linearGradient id="brBg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f2e9d8"/><stop offset="1" stop-color="#ddcfb4"/></linearGradient>
+    <linearGradient id="brTone" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d3b394"/><stop offset="1" stop-color="#a5826a"/></linearGradient>
+    <linearGradient id="brGown" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fcf8f0"/><stop offset="1" stop-color="#e4d7bd"/></linearGradient>
+    <linearGradient id="brLeaf" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8a9172"/><stop offset="1" stop-color="#5d684f"/></linearGradient>
+    <filter id="brGrain"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" stitchTiles="stitch"/><feColorMatrix type="matrix" values="0 0 0 0 .4 0 0 0 0 .36 0 0 0 0 .28 0 0 0 .05 0"/></filter>
+  </defs>
+  <rect width="600" height="760" fill="url(#brBg)"/>
+  <path d="M70 760 V330 A230 230 0 0 1 530 330 V760 Z" fill="#f7f1e3" opacity=".8"/>
+  <path d="M70 760 V330 A230 230 0 0 1 530 330 V760" fill="none" stroke="#8a6f52" stroke-width="1.4" opacity=".55"/>
+  <!-- figure -->
+  <path d="M170 760 V600 Q170 500 300 500 Q430 500 430 600 V760 Z" fill="url(#brGown)"/>
+  <path d="M195 640 Q170 700 185 760 M405 640 Q430 700 415 760" stroke="#d8c8ab" stroke-width="2.5" fill="none"/>
+  <circle cx="300" cy="420" r="76" fill="url(#brTone)"/>
+  <path d="M300 340 q-80 6 -84 98 q20 -38 44 -50 q-8 24 4 38 q-2 -42 36 -50 q38 8 36 50 q12 -14 4 -38 q24 12 44 50 q-4 -92 -84 -98" fill="#6b4f3a"/>
+  <path d="M218 440 q-12 82 20 138 q-28 -102 8 -158 Z M382 440 q12 82 -20 138 q28 -102 -8 -158 Z" fill="#6b4f3a"/>
+  <!-- small bouquet -->
+  <g transform="translate(438 620)">
+    <g stroke="#5d684f" stroke-width="2.4" fill="none"><path d="M0 60 Q-6 20 -22 -6 M0 60 Q4 16 20 -14 M0 60 Q0 12 0 -22"/></g>
+    <circle cx="-24" cy="-12" r="11" fill="#d8b2a6"/><circle cx="22" cy="-20" r="11" fill="#d8b2a6"/><circle cx="0" cy="-28" r="12" fill="#c99a8e"/>
+    <ellipse cx="-38" cy="10" rx="12" ry="5" transform="rotate(-30 -38 10)" fill="url(#brLeaf)"/>
+    <ellipse cx="36" cy="4" rx="12" ry="5" transform="rotate(30 36 4)" fill="url(#brLeaf)"/>
+  </g>
+  <!-- eucalyptus column right -->
+  <g stroke="#7a8464" stroke-width="1.6" fill="none" opacity=".85">
+    <path d="M560 80 Q530 220 556 400 Q536 540 560 720"/>
+    <path d="M558 140 Q526 150 508 132 M556 240 Q522 252 506 232 M558 340 Q524 352 508 332 M556 450 Q522 462 506 442 M558 560 Q524 572 508 552"/>
+  </g>
+  <g fill="url(#brLeaf)" opacity=".85">
+    <ellipse cx="508" cy="132" rx="13" ry="6" transform="rotate(14 508 132)"/>
+    <ellipse cx="506" cy="232" rx="13" ry="6" transform="rotate(14 506 232)"/>
+    <ellipse cx="508" cy="332" rx="13" ry="6" transform="rotate(14 508 332)"/>
+    <ellipse cx="506" cy="442" rx="13" ry="6" transform="rotate(14 506 442)"/>
+    <ellipse cx="508" cy="552" rx="13" ry="6" transform="rotate(14 508 552)"/>
+  </g>
+  <g fill="#d8b2a6" opacity=".75"><circle cx="560" cy="80" r="5"/><circle cx="552" cy="180" r="4"/></g>
+  <rect width="600" height="760" filter="url(#brGrain)" opacity=".5"/>
+</svg>
