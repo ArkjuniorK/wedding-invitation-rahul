@@ -73,7 +73,8 @@ QRIS image before real use.
 ## Assets
 
 `assets/audio/ambient-loop.wav` is a real 30-second seamlessly looping
-ambient pad; it is only fetched when the user first presses play, and fades
+ambient pad (generated locally by `assets/audio/make_ambient.py`, stdlib
+Python only); it is only fetched when the user first presses play, and fades
 in/out over ~1.5 s.
 
 ## Limitations (frontend-only by design)
