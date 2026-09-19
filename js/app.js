@@ -558,8 +558,12 @@ function fillGiftCard(tpl, owner, showOwner) {
   const node = tpl.content.firstElementChild.cloneNode(true);
   const badge = node.querySelector(".gift__owner");
   if (badge) {
-    if (showOwner) badge.textContent = owner.host;
-    else badge.remove();
+    if (showOwner) {
+      badge.hidden = false;
+      badge.textContent = owner.host;
+    } else {
+      badge.remove();
+    }
   }
   return node;
 }
