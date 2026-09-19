@@ -13,7 +13,6 @@ const invitationData = {
   },
 
   date: "Kamis, 8 Oktober 2026 & Sabtu, 10 Oktober 2026",
-  weddingDateTime: "2026-10-08T10:00:00+08:00",
 
   /* ---------- MULTI-OWNER ----------
      sharedEvents = acara milik berdua (akad).
@@ -212,6 +211,17 @@ function activeBanks(ownerKey) {
   return activeOwnerKeys(ownerKey).map((k) => invitationData.owners[k]);
 }
 
+/* Event terdekat yang belum lewat; kalau semua sudah lewat, pakai yang terakhir. */
+function countdownTarget() {
+  const events = activeEvents(ownerState.key)
+    .slice()
+    .sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime());
+  if (!events.length) return NaN;
+  const now = Date.now();
+  const next = events.find((ev) => new Date(ev.start).getTime() > now);
+  return new Date((next || events[events.length - 1]).start).getTime();
+}
+
 const ownerState = { key: resolveOwnerKey(window.location.search) };
 
 /* ---------- 3. GUEST PERSONALISATION (?to=) ---------- */
@@ -260,7 +270,7 @@ function initCover() {
 
 /* ---------- 5. COUNTDOWN ---------- */
 function initCountdown() {
-  const target = new Date(invitationData.weddingDateTime).getTime();
+  const target = countdownTarget();
   const els = {
     d: $("#cdDays"), h: $("#cdHours"), m: $("#cdMinutes"), s: $("#cdSeconds"),
   };
