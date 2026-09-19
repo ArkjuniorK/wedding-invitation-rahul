@@ -186,6 +186,28 @@ const invitationData = {
     degraded: [], // alasan bagian ucapan berjalan terbatas (tanpa console noise), mis. ["firestore"]
   },
 
+  /* Musik latar per jenis undangan. `tracks.<key>` dipetakan dari ownerState.key;
+     bila browser tidak bisa memutar format primary (mis. WebM/Opus), jatuh ke fallback.
+     `active` diisi runtime oleh initMusic() untuk keperluan verifikasi. */
+  music: {
+    volume: 0.55, /* target fade — dipakai initMusic() */
+    tracks: {
+      groom: {
+        primary: "assets/audio/groom.webm",
+        fallback: "assets/audio/leberch-invitation-wedding.mp3",
+      },
+      bride: {
+        primary: "assets/audio/bride.webm",
+        fallback: "assets/audio/leberch-invitation-wedding.mp3",
+      },
+      all: {
+        primary: "assets/audio/leberch-invitation-wedding.mp3",
+        fallback: null,
+      },
+    },
+    active: null, // diisi runtime: { key, src, used: "primary"|"fallback" }
+  },
+
   bank: {
     name: "Bank BCA",
     accountName: "Nurfadilla Resti Harisda",
@@ -1003,16 +1025,52 @@ async function initWishes() {
 }
 
 /* ---------- 12. MUSIC (DOM element, gesture-driven, fade) ---------- */
+function selectMusicTrack(audio) {
+  const cfg = invitationData.music;
+  try {
+    const tracks = cfg.tracks || {};
+    const key = tracks[ownerState.key] ? ownerState.key : tracks.all ? "all" : "groom";
+    const entry = tracks[key];
+    if (!entry || !entry.primary) return;
+
+    let chosen = entry.primary;
+    let used = "primary";
+    /* Diperiksa dengan string codec-spesifik saja. Safari < 17.4 (termasuk iOS lama) hanya
+       bisa memutar Opus di container CAF, tetapi sering menjawab "maybe" untuk container
+       WebM generik padahal isinya tidak bisa didekode — jawaban itu akan menyesatkan. */
+    let webmOk = false;
+    try {
+      const opus = audio.canPlayType('audio/webm; codecs="opus"');
+      webmOk = opus === "probably" || opus === "maybe";
+    } catch (err) {
+      webmOk = false;
+    }
+    if (!webmOk && entry.fallback) {
+      chosen = entry.fallback;
+      used = "fallback";
+    }
+    audio.src = chosen;
+    cfg.active = { key: key, src: chosen, used: used };
+  } catch (err) {
+    cfg.active = null;
+  }
+}
+
 function initMusic() {
   const toggle = $("#musicToggle");
   const audio = $("#bgMusic");
   if (!toggle || !audio) return;
+
+  const musicCfg = invitationData.music;
+  selectMusicTrack(audio);
 
   audio.loop = true;
   audio.volume = 0;
 
   let playing = false;
   let fadeTimer = null;
+  let inginMain = false; /* ada niat memutar? dipakai jaring fallback saat gagal dekode */
+  let sudahCadangan = false; /* fallback hanya boleh dipakai sekali, jangan sampai berputar-putar */
 
   function fadeTo(target, done) {
     window.clearInterval(fadeTimer);
@@ -1041,11 +1099,12 @@ function initMusic() {
   }
 
   function play() {
+    inginMain = true;
     audio
       .play()
       .then(() => {
         setUi(true);
-        fadeTo(0.55);
+        fadeTo(musicCfg.volume);
       })
       .catch(() => {
         /* autoplay policy rejected or the asset failed — revert honestly */
@@ -1069,6 +1128,24 @@ function initMusic() {
 
   audio.addEventListener("pause", () => {
     if (playing) setUi(false);
+  });
+
+  /* Jaring kedua: bila trek utama gagal dimuat/didekode (jawaban canPlayType bisa keliru),
+     pindah ke trek cadangan SEKALI saja lalu coba putar lagi — jangan biarkan tamu sunyi. */
+  audio.addEventListener("error", () => {
+    const cfg = invitationData.music;
+    const act = cfg.active;
+    const entry = act ? cfg.tracks[act.key] : null;
+    const cadangan = entry ? entry.fallback : null;
+    if (sudahCadangan || !cadangan || !act || act.used === "fallback") {
+      inginMain = false;
+      setUi(false);
+      return;
+    }
+    sudahCadangan = true;
+    audio.src = cadangan;
+    cfg.active = { key: act.key, src: cadangan, used: "fallback", reason: "error" };
+    if (inginMain) play();
   });
 
   document.addEventListener("visibilitychange", () => {
