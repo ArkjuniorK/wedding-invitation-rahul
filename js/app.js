@@ -6,7 +6,7 @@
 /* ---------- 1. SINGLE SOURCE OF TRUTH ---------- */
 const invitationData = {
   couple: {
-    bride: "Nurfadilla Resti Harisa, S.Pt",
+    bride: "Nurfadilla Resti Harisda, S.Pt",
     groom: "Arkhul Prakashandy Putra, S.Pt",
     brideShort: "Resti",
     groomShort: "Arkhul",
@@ -76,9 +76,8 @@ const invitationData = {
 
   bank: {
     name: "Bank BCA",
-    accountName: "Nurfadilla Resti Harisa",
+    accountName: "Nurfadilla Resti Harisda",
     accountNumber: "1234567890",
-    qrisImage: "assets/images/qris.svg",
   },
 
   demoWishes: [
@@ -404,26 +403,6 @@ function initGallery() {
     if (!lightbox.open) return;
     if (e.key === "ArrowLeft") step(-1);
     else if (e.key === "ArrowRight") step(1);
-  });
-}
-
-/* ---------- 9. QR MODAL ---------- */
-function initQrModal() {
-  const modal = $("#qrModal");
-  const openBtn = $("#qrOpenBtn");
-  const closeBtn = $("#qrCloseBtn");
-  if (!modal || !openBtn || !closeBtn) return;
-
-  openBtn.addEventListener("click", () => {
-    if (typeof modal.showModal === "function") modal.showModal();
-    else modal.setAttribute("open", "");
-  });
-  closeBtn.addEventListener("click", () => {
-    if (modal.open && typeof modal.close === "function") modal.close();
-    else modal.removeAttribute("open");
-  });
-  modal.addEventListener("click", (e) => {
-    if (e.target === modal) modal.close();
   });
 }
 
@@ -765,7 +744,6 @@ function init() {
   initEvents();
   initStory();
   initGallery();
-  initQrModal();
   initClipboard();
   initWishes();
   initMusic();

@@ -9,7 +9,7 @@ no network dependencies at runtime.
 - Full-screen opening cover with guest personalisation (`index.html?to=Nama+Tamu`)
 - Hero, quote, couple profiles, events, live countdown, love-story timeline,
   gallery with fullscreen lightbox, cashless gift section
-  with copy-to-clipboard + QRIS modal, wishes guestbook, closing
+  with copy-to-clipboard, wishes guestbook, closing
 - Client-side generated `.ics` calendar files ("Simpan ke Kalender")
 - Google Maps deep links for navigation
 - Background ambient music (gesture-triggered, fades in/out, never autoplays before the user opens the invitation)
@@ -44,13 +44,13 @@ Everything editable lives in **one object at the top of [`js/app.js`](js/app.js)
 
 ```js
 const invitationData = {
-  couple:     { bride: "Nurfadilla Resti Harisa, S.Pt", groom: "Arkhul Prakashandy Putra, S.Pt" },
+  couple:     { bride: "Nurfadilla Resti Harisda, S.Pt", groom: "Arkhul Prakashandy Putra, S.Pt" },
   date:       "Kamis, 8 Oktober 2026 & Sabtu, 10 Oktober 2026",
   weddingDateTime: "2026-10-08T10:00:00+08:00",
   events:     [ /* akad, resepsi — times, venue, ICS start/end */ ],
   story:      [ /* timeline entries */ ],
   gallery:    [ /* src, alt, aspect ratio */ ],
-  bank:       { name, accountName, accountNumber, qrisImage },
+  bank:       { name, accountName, accountNumber },
   demoWishes: [ /* seeded guestbook entries */ ],
 };
 ```
@@ -65,9 +65,7 @@ The files in `assets/images/` are **original vector placeholders authored for
 this project** in the "Modern Editorial Botanical Wedding" language (warm
 ivory/espresso/olive/rose duotones, line-art botanicals, paper grain). They are
 designed to be swapped 1:1 for the couple's real photographs with the same
-filenames — no layout changes needed. `assets/images/qris.svg` is an
-illustration, **not a scannable code**; replace it with the couple's official
-QRIS image before real use.
+filenames — no layout changes needed.
 
 ## Assets
 
@@ -80,6 +78,5 @@ only fetched when the user first presses play, and fades in/out over ~1.5 s.
   there is no backend and nothing is sent anywhere. The invitation text
   states this honestly.
 - Wishes are seeded with demo entries locally; each visitor sees their own.
-- The QRIS image is a placeholder illustration, not a working payment code.
 - Google Maps links require internet when the *user* taps them (navigation
   links only — nothing is loaded from the network by the page itself).
