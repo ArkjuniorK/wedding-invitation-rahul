@@ -113,6 +113,9 @@ function applyGuestName() {
     /* malformed URL — keep the default */
   }
   el.textContent = guest || "Bapak/Ibu/Saudara/i";
+
+  const prefix = $(".cover__to-prefix", $("#cover") || document);
+  if (!guest && prefix && prefix.parentNode) prefix.parentNode.removeChild(prefix);
 }
 
 /* ---------- 4. COVER / OPENING ---------- */
