@@ -13,7 +13,76 @@ const invitationData = {
   },
 
   date: "Kamis, 8 Oktober 2026 & Sabtu, 10 Oktober 2026",
-  weddingDateTime: "2026-10-08T10:00:00+08:00",
+
+  /* ---------- MULTI-OWNER ----------
+     sharedEvents = acara milik berdua (akad).
+     owners.<key>.events = resepsi milik pihak tersebut.
+     owners.<key>.bank   = rekening pihak tersebut.  */
+  sharedEvents: [
+    {
+      id: "akad",
+      kind: "Akad Nikah",
+      name: "Akad Nikah",
+      dateLabel: "Kamis, 8 Oktober 2026",
+      timeLabel: "10.00 WITA",
+      start: "2026-10-08T10:00:00+08:00",
+      end: "2026-10-08T12:00:00+08:00",
+      venue: "Sudiang, Kota Makassar",
+      address: "Jl. Bahagia No. 56 Lr 1, Kelurahan Sudiang, Kota Makassar",
+    },
+  ],
+
+  owners: {
+    groom: {
+      key: "groom",
+      label: "Mempelai Pria",
+      shortName: "Arkhul",
+      host: "Keluarga Mempelai Pria",
+      events: [
+        {
+          id: "resepsi-pria",
+          kind: "Resepsi",
+          name: "Resepsi",
+          dateLabel: "Sabtu, 10 Oktober 2026",
+          timeLabel: "10.00 WITA – Selesai",
+          start: "2026-10-10T10:00:00+08:00",
+          end: "2026-10-10T23:00:00+08:00",   // praktis "sampai larut malam" (lihat plan §8 no. 2)
+          venue: "Bulutanah, Kab. Bone",
+          address: "Jl. Poros Sinjai-Palattae, Cangkano, Desa Bulutanah, Kec. Kajuara, Kab. Bone",
+        },
+      ],
+      bank: {
+        name: "Bank BCA",
+        accountName: "Arkhul Prakashandy Putra",
+        accountNumber: "7325794763",
+      },
+    },
+
+    bride: {
+      key: "bride",
+      label: "Mempelai Wanita",
+      shortName: "Resti",
+      host: "Keluarga Mempelai Wanita",
+      events: [
+        {
+          id: "resepsi-wanita",
+          kind: "Resepsi",
+          name: "Resepsi",
+          dateLabel: "Kamis, 8 Oktober 2026",
+          timeLabel: "19.00 WITA – Selesai",
+          start: "2026-10-08T19:00:00+08:00",
+          end: "2026-10-08T23:00:00+08:00",   // .ics: "sampai selesai" dibatasi 23.00 WITA
+          venue: "Sudiang, Kota Makassar",
+          address: "Jl. Bahagia No. 56 Lr 1, Kelurahan Sudiang, Kota Makassar",
+        },
+      ],
+      bank: {
+        name: "Bank BCA",
+        accountName: "Nurfadilla Resti Harisda",
+        accountNumber: "3650176455",
+      },
+    },
+  },
 
   events: [
     {
@@ -99,6 +168,62 @@ function pad2(n) {
   return String(n).padStart(2, "0");
 }
 
+/* ---------- 2b. OWNER RESOLUTION (?owner=pria|wanita|semua) ---------- */
+const OWNER_PARAM = "owner";
+const OWNER_ALIASES = {
+  pria: "groom", groom: "groom", "mempelai-pria": "groom",
+  wanita: "bride", bride: "bride", "mempelai-wanita": "bride",
+};
+
+/* "all" = tampil semua; "groom"/"bride" = satu pihak.
+   Default (tanpa param) DAN alias tak dikenal = pihak pria (keputusan pemilik undangan). */
+const DEFAULT_OWNER = "groom";
+
+function resolveOwnerKey(search) {
+  try {
+    const raw = (new URLSearchParams(search).get(OWNER_PARAM) || "").trim().toLowerCase();
+    if (!raw) return DEFAULT_OWNER;
+    if (raw === "all" || raw === "semua" || raw === "both" || raw === "gabungan") return "all";
+    return OWNER_ALIASES[raw] || DEFAULT_OWNER;
+  } catch (err) {
+    return DEFAULT_OWNER;
+  }
+}
+
+function activeOwnerKeys(ownerKey) {
+  const keys = Object.keys(invitationData.owners);
+  if (ownerKey && ownerKey !== "all" && keys.includes(ownerKey)) return [ownerKey];
+  return keys;
+}
+
+/* Acara yang tampil = shared + resepsi milik pihak yang aktif. */
+function activeEvents(ownerKey) {
+  const shared = invitationData.sharedEvents.map((ev) => ({ ...ev, ownerKey: null, host: null }));
+  const perOwner = activeOwnerKeys(ownerKey).flatMap((k) =>
+    invitationData.owners[k].events.map((ev) => ({
+      ...ev, ownerKey: k, host: invitationData.owners[k].host,
+    }))
+  );
+  return [...shared, ...perOwner];
+}
+
+function activeBanks(ownerKey) {
+  return activeOwnerKeys(ownerKey).map((k) => invitationData.owners[k]);
+}
+
+/* Event terdekat yang belum lewat; kalau semua sudah lewat, pakai yang terakhir. */
+function countdownTarget() {
+  const events = activeEvents(ownerState.key)
+    .slice()
+    .sort((a, b) => new Date(a.start).getTime() - new Date(b.start).getTime());
+  if (!events.length) return NaN;
+  const now = Date.now();
+  const next = events.find((ev) => new Date(ev.start).getTime() > now);
+  return new Date((next || events[events.length - 1]).start).getTime();
+}
+
+const ownerState = { key: resolveOwnerKey(window.location.search) };
+
 /* ---------- 3. GUEST PERSONALISATION (?to=) ---------- */
 function applyGuestName() {
   const el = $("#guestName");
@@ -115,6 +240,17 @@ function applyGuestName() {
 
   const prefix = $(".cover__to-prefix", $("#cover") || document);
   if (!guest && prefix && prefix.parentNode) prefix.parentNode.removeChild(prefix);
+}
+
+/* Label pihak muncul pada tampilan satu pihak (termasuk link default = pria),
+   dan tersembunyi pada tampilan ?owner=semua. */
+function applyOwnerLabel() {
+  const el = $("#coverOwner");
+  if (!el) return;
+  const keys = activeOwnerKeys(ownerState.key);
+  if (ownerState.key === "all" || keys.length !== 1) return;
+  el.textContent = invitationData.owners[keys[0]].host;
+  el.hidden = false;
 }
 
 /* ---------- 4. COVER / OPENING ---------- */
@@ -145,7 +281,7 @@ function initCover() {
 
 /* ---------- 5. COUNTDOWN ---------- */
 function initCountdown() {
-  const target = new Date(invitationData.weddingDateTime).getTime();
+  const target = countdownTarget();
   const els = {
     d: $("#cdDays"), h: $("#cdHours"), m: $("#cdMinutes"), s: $("#cdSeconds"),
   };
@@ -182,14 +318,24 @@ function initEvents() {
   const list = $("#eventsList");
   if (!list) return;
 
-  invitationData.events.forEach((ev) => {
+  const showHost = activeOwnerKeys(ownerState.key).length > 1;
+  list.textContent = "";
+
+  activeEvents(ownerState.key).forEach((ev) => {
     const card = document.createElement("article");
     card.className = "event-card";
     card.dataset.reveal = "";
+    card.dataset.owner = ev.ownerKey || "shared";
 
     const kind = document.createElement("p");
     kind.className = "event-card__kind";
     kind.textContent = ev.kind;
+    if (showHost && ev.host) {
+      const host = document.createElement("p");
+      host.className = "event-card__owner";
+      host.textContent = ev.host;
+      card.append(host);
+    }
 
     const name = document.createElement("h3");
     name.className = "event-card__name";
@@ -261,7 +407,7 @@ function buildIcs(ev) {
     `DTSTAMP:${toIcsUtc(new Date().toISOString())}`,
     `DTSTART:${toIcsUtc(ev.start)}`,
     `DTEND:${toIcsUtc(ev.end)}`,
-    `SUMMARY:${icsEscape(`${ev.name} — Arkhul & Resti`)}`,
+    `SUMMARY:${icsEscape(`${ev.name} — ${ev.host || "Arkhul & Resti"}`)}`,
     `DESCRIPTION:${icsEscape(`${ev.dateLabel}. ${ev.timeLabel}. Mohon hadir tepat waktu.`)}`,
     `LOCATION:${icsEscape(`${ev.venue}, ${ev.address}`)}`,
     "END:VEVENT",
@@ -275,7 +421,7 @@ function downloadIcs(ev) {
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
-  a.download = `${ev.name.replace(/\s+/g, "-").toLowerCase()}-arkhul-resti.ics`;
+  a.download = `${ev.id}-arkhul-resti.ics`;
   document.body.append(a);
   a.click();
   a.remove();
@@ -406,13 +552,56 @@ function initGallery() {
   });
 }
 
-/* ---------- 10. CLIPBOARD ---------- */
-function initClipboard() {
-  const btn = $("#copyBankBtn");
-  if (!btn) return;
-  const number = invitationData.bank.accountNumber;
+/* ---------- 9b. GIFT (satu blok per pihak) ---------- */
+function fillGiftCard(tpl, owner, showOwner) {
+  if (!tpl || !owner) return null;
+  const node = tpl.content.firstElementChild.cloneNode(true);
+  const badge = node.querySelector(".gift__owner");
+  if (badge) {
+    if (showOwner) {
+      badge.hidden = false;
+      badge.textContent = owner.host;
+    } else {
+      badge.remove();
+    }
+  }
+  return node;
+}
 
-  function fallbackCopy(text) {
+function initGift() {
+  const grid = $("#giftGrid");
+  if (!grid) return;
+  const tpl = $("#giftBankTpl");
+  if (!tpl) return;
+  const owners = activeBanks(ownerState.key);
+  const showOwner = owners.length > 1;
+  grid.textContent = "";
+
+  owners.forEach((owner) => {
+    const bank = owner.bank;
+    if (!bank) return;
+
+    const card = fillGiftCard(tpl, owner, showOwner);
+    if (card) {
+      const name = card.querySelector(".gift__bank-name");
+      if (name) name.textContent = bank.name;
+      const holder = card.querySelector(".gift__holder");
+      if (holder) holder.textContent = `a.n. ${bank.accountName}`;
+      const number = card.querySelector(".gift__number");
+      if (number) number.textContent = bank.accountNumber;
+      const copy = card.querySelector(".gift__copy");
+      if (copy) {
+        copy.setAttribute("aria-label", `Salin nomor rekening ${bank.name} milik ${bank.accountName}`);
+        copy.addEventListener("click", () => copyToClipboard(bank.accountNumber, copy));
+      }
+      grid.append(card);
+    }
+  });
+}
+
+/* ---------- 10. CLIPBOARD (dipakai tiap tombol rekening) ---------- */
+function copyToClipboard(text, btn) {
+  function fallback() {
     const ta = document.createElement("textarea");
     ta.value = text;
     ta.setAttribute("readonly", "");
@@ -421,18 +610,15 @@ function initClipboard() {
     document.body.append(ta);
     ta.select();
     let ok = false;
-    try {
-      ok = document.execCommand("copy");
-    } catch (err) {
-      ok = false;
-    }
+    try { ok = document.execCommand("copy"); } catch (err) { ok = false; }
     ta.remove();
     return ok;
   }
 
   function flash(ok) {
-    btn.classList.add("is-copied");
+    if (!btn) return;
     const label = btn.lastChild;
+    btn.classList.add("is-copied");
     if (label && label.nodeType === Node.TEXT_NODE) {
       label.textContent = ok ? " Tersalin!" : " Gagal menyalin";
     }
@@ -442,16 +628,11 @@ function initClipboard() {
     }, 2200);
   }
 
-  btn.addEventListener("click", () => {
-    if (navigator.clipboard && window.isSecureContext) {
-      navigator.clipboard.writeText(number).then(
-        () => flash(true),
-        () => flash(fallbackCopy(number))
-      );
-    } else {
-      flash(fallbackCopy(number));
-    }
-  });
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(text).then(() => flash(true), () => flash(fallback()));
+  } else {
+    flash(fallback());
+  }
 }
 
 /* ---------- 11. WISHES / GUESTBOOK (localStorage) ---------- */
@@ -739,12 +920,13 @@ function initReveals() {
 /* ---------- 15. BOOT ---------- */
 function init() {
   applyGuestName();
+  applyOwnerLabel();
   initCover();
   initCountdown();
   initEvents();
+  initGift();
   initStory();
   initGallery();
-  initClipboard();
   initWishes();
   initMusic();
   initNavigation();

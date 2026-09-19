@@ -177,6 +177,14 @@ button { font: inherit; color: inherit; cursor: pointer; }
   text-wrap: balance;
 }
 .cover__date { font-size: .95rem; letter-spacing: .08em; color: #efe5cd; }
+.cover__owner {
+  font-family: var(--font-body);
+  font-size: var(--fs-eyebrow);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #efe5cd;
+  margin: 0.55rem 0 0;
+}
 .cover__to-label { margin-top: 1.2rem; font-size: .72rem; letter-spacing: .3em; text-transform: uppercase; color: #d9cba9; }
 .cover__to-prefix { font-size: .8rem; color: #d9cba9; }
 .cover__to-name {
@@ -296,6 +304,14 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .event-card__kind {
   font-size: .7rem; letter-spacing: .3em; text-transform: uppercase;
   color: var(--color-gold);
+}
+.event-card__owner {
+  font-family: var(--font-body);
+  font-size: var(--fs-eyebrow);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  margin: 0 0 0.45rem;
 }
 .event-card__name { font-family: var(--font-display); font-size: 1.5rem; font-weight: 500; margin-top: .5rem; }
 .event-card__when { margin-top: .8rem; font-family: var(--font-heading); font-size: 1.05rem; }
@@ -433,6 +449,14 @@ button { font: inherit; color: inherit; cursor: pointer; }
   box-shadow: var(--shadow-soft);
 }
 .gift__icon { color: var(--color-gold); margin-inline: auto; }
+.gift__owner {
+  font-family: var(--font-body);
+  font-size: var(--fs-eyebrow);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  margin: 0 0 0.45rem;
+}
 .gift__card h3 { margin-top: .7rem; font-family: var(--font-display); font-size: 1.3rem; font-weight: 500; }
 .gift__holder { margin-top: .3rem; color: var(--color-muted); font-size: .92rem; }
 .gift__number {
