@@ -1035,11 +1035,13 @@ function selectMusicTrack(audio) {
 
     let chosen = entry.primary;
     let used = "primary";
+    /* Diperiksa dengan string codec-spesifik saja. Safari < 17.4 (termasuk iOS lama) hanya
+       bisa memutar Opus di container CAF, tetapi sering menjawab "maybe" untuk container
+       WebM generik padahal isinya tidak bisa didekode — jawaban itu akan menyesatkan. */
     let webmOk = false;
     try {
-      webmOk =
-        audio.canPlayType('audio/webm; codecs="opus"') !== "" ||
-        audio.canPlayType("audio/webm") !== "";
+      const opus = audio.canPlayType('audio/webm; codecs="opus"');
+      webmOk = opus === "probably" || opus === "maybe";
     } catch (err) {
       webmOk = false;
     }
@@ -1067,6 +1069,8 @@ function initMusic() {
 
   let playing = false;
   let fadeTimer = null;
+  let inginMain = false; /* ada niat memutar? dipakai jaring fallback saat gagal dekode */
+  let sudahCadangan = false; /* fallback hanya boleh dipakai sekali, jangan sampai berputar-putar */
 
   function fadeTo(target, done) {
     window.clearInterval(fadeTimer);
@@ -1095,6 +1099,7 @@ function initMusic() {
   }
 
   function play() {
+    inginMain = true;
     audio
       .play()
       .then(() => {
@@ -1123,6 +1128,24 @@ function initMusic() {
 
   audio.addEventListener("pause", () => {
     if (playing) setUi(false);
+  });
+
+  /* Jaring kedua: bila trek utama gagal dimuat/didekode (jawaban canPlayType bisa keliru),
+     pindah ke trek cadangan SEKALI saja lalu coba putar lagi — jangan biarkan tamu sunyi. */
+  audio.addEventListener("error", () => {
+    const cfg = invitationData.music;
+    const act = cfg.active;
+    const entry = act ? cfg.tracks[act.key] : null;
+    const cadangan = entry ? entry.fallback : null;
+    if (sudahCadangan || !cadangan || !act || act.used === "fallback") {
+      inginMain = false;
+      setUi(false);
+      return;
+    }
+    sudahCadangan = true;
+    audio.src = cadangan;
+    cfg.active = { key: act.key, src: cadangan, used: "fallback", reason: "error" };
+    if (inginMain) play();
   });
 
   document.addEventListener("visibilitychange", () => {

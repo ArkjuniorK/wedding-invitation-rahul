@@ -97,8 +97,11 @@ filenames — no layout changes needed.
 
 ## Assets
 
-`assets/audio/leberch-invitation-wedding.mp3` is the background track; it is
-only fetched when the user first presses play, and fades in/out over ~1.5 s.
+`assets/audio/` holds three tracks: `groom.webm` and `bride.webm` (Opus, per
+jenis undangan) plus `leberch-invitation-wedding.mp3` (trek gabungan/fallback).
+A track is only fetched when the guest first presses play (cover "Buka
+Undangan" or the music button), and it fades in/out over ~1.5 s — see
+"Musik latar per jenis undangan" below for the full mapping.
 
 ## Musik latar per jenis undangan
 
