@@ -1,0 +1,4 @@
+{
+  "_catatan": "Sumber data ucapan untuk section 'Kirim Ucapan'. Urutan entri bebas - aplikasi mengurutkan sendiri dari yang terbaru. Field wajib per entri: name (teks, maks 40 karakter), message (teks, maks 200 karakter), createdAt (ISO 8601 dengan offset zona waktu, contoh 2026-10-08T10:15:00+08:00). Entri tanpa name/message akan dilewati. File ini juga dipakai sebagai cadangan bila penyimpanan bersama (backend) tidak aktif.",
+  "wishes": []
+}

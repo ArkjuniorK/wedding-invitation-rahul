@@ -30,6 +30,10 @@ Or simply open `index.html` directly in a browser (double-click). Both work;
 a static server is only preferred because the browser URL bar then supports
 the `?to=` parameter cleanly.
 
+**However**, the "Kirim Ucapan" section reads `data/wishes.json` via `fetch`,
+which does not work over `file://` — so the wishes list requires running the
+local server above.
+
 ## Personalising a guest link
 
 ```
@@ -74,7 +78,7 @@ const invitationData = {
   },
   story:      [ /* timeline entries */ ],
   gallery:    [ /* src, alt, aspect ratio */ ],
-  demoWishes: [ /* seeded guestbook entries */ ],
+  wishes:     { seedUrl, backend }, /* see "Ucapan (guestbook)" below */
 };
 ```
 
@@ -96,11 +100,93 @@ filenames — no layout changes needed.
 `assets/audio/leberch-invitation-wedding.mp3` is the background track; it is
 only fetched when the user first presses play, and fades in/out over ~1.5 s.
 
+## Ucapan (guestbook)
+
+Ucapan dan doa **dibaca dari file JSON** [`data/wishes.json`](data/wishes.json),
+bukan dari `localStorage`. Skema filenya:
+
+```json
+{
+  "_catatan": "…dokumentasi bebas, diabaikan aplikasi…",
+  "wishes": [
+    { "name": "Budi", "message": "Selamat menempuh hidup baru!", "createdAt": "2026-10-08T10:15:00+08:00" }
+  ]
+}
+```
+
+| Field | Keterangan |
+|---|---|
+| `name` | wajib, teks, maks 40 karakter |
+| `message` | wajib, teks, maks 200 karakter |
+| `createdAt` | ISO 8601 dengan offset zona waktu (contoh `2026-10-08T10:15:00+08:00`) |
+
+Cara menambah ucapan manual: edit `data/wishes.json`, tambahkan satu objek ke dalam
+`wishes[]`. **Urutan entri bebas** — situs selalu menampilkan **terbaru di atas**,
+diurutkan otomatis dari `createdAt`. Entri tanpa `name` atau `message` dilewati.
+
+Catatan penting: file ini dibaca dengan `fetch`, jadi **halaman harus dibuka lewat
+server** (`python3 -m http.server 8099` dari root repo), **bukan** `file://` —
+kalau dibuka lewat `file://` daftar ucapan tetap kosong. Saat daftar kosong tampil
+teks "Jadilah yang pertama memberi ucapan dan doa."
+
+Tanpa backend, ucapan yang dikirim pengunjung hanya tampil di perangkatnya untuk
+sesi itu saja dan tidak disimpan di mana pun.
+
+## Penyimpanan bersama (opsional)
+
+Supaya ucapan tersimpan persistent dan terlihat oleh semua pengunjung, aktifkan
+penyimpanan bersama dengan **Firebase Realtime Database** (frontend tetap vanilla
+JS — hanya `fetch` REST biasa):
+
+1. Buat proyek di <https://console.firebase.google.com> (paket gratis Spark, tanpa kartu kredit).
+2. Buat Realtime Database, pilih lokasi `asia-southeast1` (Singapura).
+3. Di tab **Rules**, tempel aturan berikut, lalu Publish:
+
+```json
+{
+  "rules": {
+    "wishes": {
+      ".read": true,
+      ".indexOn": "ts",
+      "$wishId": {
+        ".write": "!data.exists()",
+        ".validate": "newData.hasChildren(['name','message','ts'])",
+        "name": {
+          ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 40"
+        },
+        "message": {
+          ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 200"
+        },
+        "ts": {
+          ".validate": "newData.isNumber()"
+        },
+        "$other": {
+          ".validate": false
+        }
+      }
+    }
+  }
+}
+```
+
+4. Salin URL database (berakhiran `firebaseio.com` atau `firebasedatabase.app`) ke
+   `invitationData.wishes.backend.url` di `js/app.js`:
+
+```js
+wishes: {
+  seedUrl: "data/wishes.json",
+  backend: { url: "https://<proyek>-default-rtdb.asia-southeast1.firebasedatabase.app" },
+},
+```
+
+Selesai — ucapan baru langsung terlihat oleh semua pengunjung, dan dapat
+dihapus/dimoderasi dari Firebase Console. Selama `backend` masih `null`, situs
+tetap jalan normal dengan `data/wishes.json` saja.
+
 ## Limitations (frontend-only by design)
 
-- The wishes guestbook is stored in `localStorage` on each visitor's device —
-  there is no backend and nothing is sent anywhere. The invitation text
-  states this honestly.
-- Wishes are seeded with demo entries locally; each visitor sees their own.
+- Tanpa backend, ucapan yang dikirim hanya tampil untuk sesi tersebut di
+  perangkat itu — tidak disimpan di mana pun. Jika ingin persistent di semua
+  perangkat, aktifkan "Penyimpanan bersama (opsional)" di atas.
 - Google Maps links require internet when the *user* taps them (navigation
   links only — nothing is loaded from the network by the page itself).

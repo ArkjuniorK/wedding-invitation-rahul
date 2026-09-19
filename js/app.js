@@ -177,13 +177,18 @@ const invitationData = {
     },
   ],
 
+  // Ucapan: dibaca dari data/wishes.json. Isi `backend` bila memakai penyimpanan bersama
+  // (Firebase Realtime Database). Selama backend null, situs tetap jalan dengan JSON saja.
+  wishes: {
+    seedUrl: "data/wishes.json",
+    backend: null, // contoh: { url: "https://<proyek>-default-rtdb.asia-southeast1.firebasedatabase.app" }
+  },
+
   bank: {
     name: "Bank BCA",
     accountName: "Nurfadilla Resti Harisda",
     accountNumber: "1234567890",
   },
-
-  demoWishes: [],
 };
 
 /* ---------- 2. SHORT HELPERS ---------- */
@@ -725,29 +730,64 @@ function copyToClipboard(text, btn) {
   }
 }
 
-/* ---------- 11. WISHES / GUESTBOOK (localStorage) ---------- */
-const WISHES_KEY = "wedding-wishes";
-const MAX_WISHES = 200;
+/* ---------- 11. WISHES / GUESTBOOK (data/wishes.json + backend bersama opsional) ---------- */
+const WISH_LIMITS = { name: 40, message: 200 };
 
-function loadWishes() {
-  try {
-    const parsed = JSON.parse(localStorage.getItem(WISHES_KEY) || "null");
-    if (Array.isArray(parsed)) return parsed.slice(0, MAX_WISHES);
-  } catch (err) {
-    /* corrupted storage — fall through */
-  }
-  return null;
+/* Normalisasi satu entri ucapan dari JSON/backend; kembalikan null bila tidak layak. */
+function normalizeWish(raw) {
+  if (!raw || typeof raw !== "object") return null;
+  const name = String(raw.name ?? "").trim().slice(0, WISH_LIMITS.name);
+  const message = String(raw.message ?? "").trim().slice(0, WISH_LIMITS.message);
+  if (!name || !message) return null;
+  const createdAt = typeof raw.createdAt === "string" ? raw.createdAt
+    : typeof raw.ts === "number" ? new Date(raw.ts).toISOString() : "";
+  return { name, message, createdAt };
 }
 
-function saveWishes(wishes) {
+const wishTime = (w) => { const t = Date.parse(w.createdAt); return Number.isNaN(t) ? 0 : t; };
+const wishKey = (w) => `${w.name}\u0000${w.message}\u0000${w.createdAt}`;
+
+/* Baca data/wishes.json. Gagal (404, file://, JSON rusak) -> [] tanpa error di console. */
+async function fetchSeedWishes() {
   try {
-    localStorage.setItem(
-      WISHES_KEY,
-      JSON.stringify(wishes.slice(0, MAX_WISHES)),
-    );
+    const res = await fetch(invitationData.wishes.seedUrl);
+    if (!res.ok) return [];
+    const data = await res.json();
+    const arr = Array.isArray(data.wishes) ? data.wishes : [];
+    return arr.map(normalizeWish).filter(Boolean).sort((a, b) => wishTime(b) - wishTime(a));
   } catch (err) {
-    /* storage full/blocked — demo continues */
+    return [];
   }
+}
+
+/* Baca semua ucapan dari backend bersama. backend null / gagal -> null (tak ada data baru). */
+async function fetchRemoteWishes() {
+  const backend = invitationData.wishes.backend;
+  if (!backend || !backend.url) return null;
+  try {
+    const res = await fetch(
+      `${backend.url.replace(/\/+$/, "")}/wishes.json`,
+    );
+    if (!res.ok) return null;
+    const data = await res.json();
+    const arr = data && typeof data === "object" ? Object.values(data) : [];
+    return arr.map(normalizeWish).filter(Boolean).sort((a, b) => wishTime(b) - wishTime(a));
+  } catch (err) {
+    return null;
+  }
+}
+
+/* Gabung tanpa duplikat (kunci: name+message+createdAt), urut terbaru dulu. */
+function mergeWishes(a, b) {
+  const seen = new Set();
+  const out = [];
+  for (const w of [...(a || []), ...(b || [])]) {
+    const key = wishKey(w);
+    if (seen.has(key)) continue;
+    seen.add(key);
+    out.push(w);
+  }
+  return out.sort((a, b) => wishTime(b) - wishTime(a));
 }
 
 function formatWishDate(iso) {
@@ -760,7 +800,7 @@ function formatWishDate(iso) {
   });
 }
 
-function renderWish(wish, list) {
+function buildWishCard(wish) {
   const li = document.createElement("li");
   li.className = "wish-card";
 
@@ -776,31 +816,65 @@ function renderWish(wish, list) {
   name.className = "wish-card__name";
   name.textContent = wish.name;
 
-  const date = document.createElement("time");
-  if (wish.date) {
-    date.dateTime = wish.date;
-    date.textContent = formatWishDate(wish.date);
+  meta.append(name);
+
+  if (wish.createdAt) {
+    const date = document.createElement("time");
+    date.dateTime = wish.createdAt;
+    date.textContent = formatWishDate(wish.createdAt);
+    meta.append(date);
   }
 
-  meta.append(name, date);
   li.append(msg, meta);
-  list.prepend(li);
+  return li;
 }
 
-function initWishes() {
+/* Satu kartu baru selalu di atas daftar. */
+function renderWish(wish, list) {
+  list.prepend(buildWishCard(wish));
+}
+
+function renderWishList(wishes, list, emptyEl) {
+  const frag = document.createDocumentFragment();
+  wishes.forEach((w) => frag.append(buildWishCard(w)));
+  list.textContent = "";
+  list.append(frag);
+  if (emptyEl) emptyEl.hidden = wishes.length >= 1;
+}
+
+async function initWishes() {
   const list = $("#wishesList");
   const form = $("#wishForm");
   const nameInput = $("#wishName");
   const msgInput = $("#wishMsg");
   const status = $("#wishStatus");
+  const emptyEl = $("#wishesEmpty");
   if (!list || !form) return;
 
-  let wishes = loadWishes();
-  if (!wishes) {
-    wishes = invitationData.demoWishes.slice();
-    saveWishes(wishes);
+  /* 1. Render segera dari JSON supaya isi langsung tampil. */
+  let seed = await fetchSeedWishes();
+  renderWishList(seed, list, emptyEl);
+
+  const setStatus = (text, ok) => {
+    status.textContent = text;
+    status.classList.toggle("is-ok", ok);
+    window.setTimeout(() => {
+      status.textContent = "";
+      status.classList.remove("is-ok");
+    }, 5000);
+  };
+
+  /* 2. Bila backend bersama diisi, ambil datanya lalu render ulang hasil gabungan. */
+  const backend = invitationData.wishes.backend;
+  if (backend && backend.url) {
+    const remote = await fetchRemoteWishes();
+    if (remote === null) {
+      setStatus("Ucapan bersama belum bisa dimuat.", false);
+    } else {
+      seed = mergeWishes(seed, remote);
+      renderWishList(seed, list, emptyEl);
+    }
   }
-  wishes.forEach((w) => renderWish(w, list));
 
   const nameError = $("#wishNameError");
   const msgError = $("#wishMsgError");
@@ -812,10 +886,12 @@ function initWishes() {
     }),
   );
 
-  form.addEventListener("submit", (e) => {
+  const submitBtn = form.querySelector('[type="submit"]');
+
+  form.addEventListener("submit", async (e) => {
     e.preventDefault();
-    const name = nameInput.value.trim();
-    const message = msgInput.value.trim();
+    const name = nameInput.value.trim().slice(0, WISH_LIMITS.name);
+    const message = msgInput.value.trim().slice(0, WISH_LIMITS.message);
     let valid = true;
 
     if (!name) {
@@ -830,19 +906,38 @@ function initWishes() {
     }
     if (!valid) return;
 
-    const wish = { name, message, date: new Date().toISOString().slice(0, 10) };
-    wishes.unshift(wish);
-    wishes = wishes.slice(0, MAX_WISHES);
-    saveWishes(wishes);
-    renderWish(wish, list);
-
-    form.reset();
-    status.textContent = "Ucapan Anda telah terkirim. Terima kasih!";
-    status.classList.add("is-ok");
-    window.setTimeout(() => {
-      status.textContent = "";
-      status.classList.remove("is-ok");
-    }, 3500);
+    submitBtn.disabled = true;
+    try {
+      if (backend && backend.url) {
+        /* Pola REST Firebase Realtime Database. */
+        const res = await fetch(
+          `${backend.url.replace(/\/+$/, "")}/wishes.json`,
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ name, message, ts: Date.now() }),
+          },
+        );
+        if (res.ok) {
+          renderWish({ name, message, createdAt: new Date().toISOString() }, list);
+          emptyEl.hidden = true;
+          form.reset();
+          setStatus("Ucapan Anda telah terkirim. Terima kasih!", true);
+        } else {
+          setStatus("Ucapan belum berhasil dikirim. Silakan coba lagi.", false);
+        }
+      } else {
+        /* Tanpa backend: tampil untuk sesi ini saja, tidak disimpan di mana pun. */
+        renderWish({ name, message, createdAt: new Date().toISOString() }, list);
+        emptyEl.hidden = true;
+        form.reset();
+        setStatus("Ucapan tersimpan di perangkat ini untuk sesi ini. Belum tersambung ke penyimpanan bersama.", true);
+      }
+    } catch (err) {
+      setStatus("Ucapan belum berhasil dikirim. Silakan coba lagi.", false);
+    } finally {
+      submitBtn.disabled = false;
+    }
   });
 }
 
