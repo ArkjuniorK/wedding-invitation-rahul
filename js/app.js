@@ -1,45 +1,42 @@
 /* ==========================================================================
-   ALYA & RAKA — invitation interactions (vanilla JS, no dependencies)
+   ARKHUL & RESTI — invitation interactions (vanilla JS, no dependencies)
    ========================================================================== */
 "use strict";
 
 /* ---------- 1. SINGLE SOURCE OF TRUTH ---------- */
 const invitationData = {
   couple: {
-    bride: "Alya Putri",
-    groom: "Raka Pratama",
+    bride: "Nurfadilla Resti Harisa, S.Pt",
+    groom: "Arkhul Prakashandy Putra, S.Pt",
+    brideShort: "Resti",
+    groomShort: "Arkhul",
   },
 
-  date: "Sabtu, 21 November 2026",
-  weddingDateTime: "2026-11-21T08:00:00+08:00",
-
-  venue: {
-    name: "The Grand Garden",
-    address: "Jl. Botolempangan No. 10, Makassar, Sulawesi Selatan",
-  },
+  date: "Kamis, 8 Oktober 2026 & Sabtu, 10 Oktober 2026",
+  weddingDateTime: "2026-10-08T10:00:00+08:00",
 
   events: [
     {
       id: "akad",
       kind: "Akad Nikah",
       name: "Akad Nikah",
-      dateLabel: "Sabtu, 21 November 2026",
-      timeLabel: "08.00 – 10.00 WIB",
-      start: "2026-11-21T08:00:00+08:00",
-      end: "2026-11-21T10:00:00+08:00",
-      venue: "The Grand Garden",
-      address: "Jl. Botolempangan No. 10, Makassar, Sulawesi Selatan",
+      dateLabel: "Kamis, 8 Oktober 2026",
+      timeLabel: "10.00 WITA",
+      start: "2026-10-08T10:00:00+08:00",
+      end: "2026-10-08T12:00:00+08:00",
+      venue: "Sudiang, Kota Makassar",
+      address: "Jl. Bahagia No. 56 Lr 1, Kelurahan Sudiang, Kota Makassar",
     },
     {
       id: "resepsi",
       kind: "Resepsi",
       name: "Resepsi",
-      dateLabel: "Sabtu, 21 November 2026",
-      timeLabel: "11.00 – 14.00 WIB",
-      start: "2026-11-21T11:00:00+08:00",
-      end: "2026-11-21T14:00:00+08:00",
-      venue: "The Grand Garden",
-      address: "Jl. Botolempangan No. 10, Makassar, Sulawesi Selatan",
+      dateLabel: "Sabtu, 10 Oktober 2026",
+      timeLabel: "10.00 WITA – Selesai",
+      start: "2026-10-10T10:00:00+08:00",
+      end: "2026-10-10T14:00:00+08:00",
+      venue: "Bulutanah, Kab. Bone",
+      address: "Jl. Poros Sinjai-Palattae, Cangkano, Desa Bulutanah, Kec. Kajuara, Kab. Bone",
     },
   ],
 
@@ -57,7 +54,7 @@ const invitationData = {
     {
       year: "2025",
       title: "Lamaran",
-      desc: "Di hadapan keluarga besar, Raka mengetuk pintu dan meminjam tangan Alya. Restu kedua keluarga kami terima dengan penuh syukur.",
+      desc: "Di hadapan keluarga besar, Arkhul mengetuk pintu dan meminjam tangan Resti. Restu kedua keluarga kami terima dengan penuh syukur.",
     },
     {
       year: "2026",
@@ -67,7 +64,7 @@ const invitationData = {
   ],
 
   gallery: [
-    { src: "assets/images/gallery-01.svg", alt: "Potret berdua Alya dan Raka di taman", ratio: "4 / 5" },
+    { src: "assets/images/gallery-01.svg", alt: "Potret berdua Arkhul dan Resti di taman", ratio: "4 / 5" },
     { src: "assets/images/gallery-02.svg", alt: "Lanskap taman lokasi akad nikah", ratio: "10 / 7" },
     { src: "assets/images/gallery-03.svg", alt: "Detail rangkaian bunga dan cincin pernikahan", ratio: "7 / 9" },
     { src: "assets/images/gallery-04.svg", alt: "Meja dekorasi resepsi dengan bunga dan lilin", ratio: "9 / 6.2" },
@@ -79,17 +76,17 @@ const invitationData = {
 
   bank: {
     name: "Bank BCA",
-    accountName: "Alya Putri",
+    accountName: "Nurfadilla Resti Harisa",
     accountNumber: "1234567890",
     qrisImage: "assets/images/qris.svg",
   },
 
   demoWishes: [
-    { name: "Sinta Maharani", message: "Selamat menempuh hidup baru, Alya & Raka! Semoga menjadi keluarga yang sakinah, mawaddah, warahmah. 🤍", date: "2026-08-30" },
+    { name: "Sinta Maharani", message: "Selamat menempuh hidup baru, Arkhul & Resti! Semoga menjadi keluarga yang sakinah, mawaddah, warahmah. 🤍", date: "2026-08-30" },
     { name: "Dimas & Keluarga", message: "Barakallahu lakuma wa baraka alaikuma. Turut berbahagia untuk kalian berdua!", date: "2026-09-02" },
-    { name: "Om Anton", message: "Selamat ya Raka & Alya! Semoga langgeng sampai kakek-nenek, diundang akadnya tapi nunggu resepsi dulu.", date: "2026-09-05" },
+    { name: "Om Anton", message: "Selamat ya Resti & Arkhul! Semoga langgeng sampai kakek-nenek, diundang akadnya tapi nunggu resepsi dulu.", date: "2026-09-05" },
     { name: "Rani Puspita", message: "Aku turut berbahagia! Semoga cinta kalian terus tumbuh dan rumah tangga kalian dipenuhi tawa.", date: "2026-09-10" },
-    { name: "Bimo Aditya", message: "Congrats, bro Raka! Jaga Alya baik-baik ya. Sampai jumpa tanggal 21 November nanti.", date: "2026-09-12" },
+    { name: "Bimo Aditya", message: "Congrats, bro Arkhul! Jaga Resti baik-baik ya. Sampai jumpa tanggal 8 Oktober nanti.", date: "2026-09-12" },
   ],
 };
 
@@ -254,16 +251,16 @@ function buildIcs(ev) {
   const lines = [
     "BEGIN:VCALENDAR",
     "VERSION:2.0",
-    "PRODID:-//Alya & Raka//Undangan Pernikahan//ID",
+    "PRODID:-//Arkhul & Resti//Undangan Pernikahan//ID",
     "CALSCALE:GREGORIAN",
     "METHOD:PUBLISH",
     "BEGIN:VEVENT",
-    `UID:${ev.id}-alyaraka-2026@undangan.local`,
+    `UID:${ev.id}-arkhulresti-2026@undangan.local`,
     `DTSTAMP:${toIcsUtc(new Date().toISOString())}`,
     `DTSTART:${toIcsUtc(ev.start)}`,
     `DTEND:${toIcsUtc(ev.end)}`,
-    `SUMMARY:${icsEscape(`${ev.name} — Alya & Raka`)}`,
-    `DESCRIPTION:${icsEscape(`${invitationData.date}. ${ev.timeLabel}. Mohon hadir tepat waktu.`)}`,
+    `SUMMARY:${icsEscape(`${ev.name} — Arkhul & Resti`)}`,
+    `DESCRIPTION:${icsEscape(`${ev.dateLabel}. ${ev.timeLabel}. Mohon hadir tepat waktu.`)}`,
     `LOCATION:${icsEscape(`${ev.venue}, ${ev.address}`)}`,
     "END:VEVENT",
     "END:VCALENDAR",
@@ -276,7 +273,7 @@ function downloadIcs(ev) {
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
-  a.download = `${ev.name.replace(/\s+/g, "-").toLowerCase()}-alya-raka.ics`;
+  a.download = `${ev.name.replace(/\s+/g, "-").toLowerCase()}-arkhul-resti.ics`;
   document.body.append(a);
   a.click();
   a.remove();
@@ -475,93 +472,7 @@ function initClipboard() {
   });
 }
 
-/* ---------- 11. RSVP (simulated, localStorage) ---------- */
-const RSVP_KEY = "wedding-rsvp";
-
-function initRsvp() {
-  const form = $("#rsvpForm");
-  const done = $("#rsvpDone");
-  const doneMsg = $("#rsvpDoneMsg");
-  const status = $("#rsvpStatus");
-  const nameInput = $("#rsvpName");
-  const nameError = $("#rsvpNameError");
-  if (!form || !done || !status) return;
-
-  function showDone(saved) {
-    form.hidden = true;
-    done.hidden = false;
-    doneMsg.textContent =
-      saved.attendance === "Hadir"
-        ? `Konfirmasi kehadiran atas nama ${saved.name} (${saved.guests} tamu) telah kami catat di perangkat ini.`
-        : `Terima kasih, ${saved.name}. Kami mendoakan kesibukan Anda — semoga nanti ada waktu bertemu.`;
-  }
-
-  try {
-    const saved = JSON.parse(localStorage.getItem(RSVP_KEY) || "null");
-    if (saved && saved.name) showDone(saved);
-  } catch (err) {
-    /* corrupted storage — ignore and show the form */
-  }
-
-  nameInput.addEventListener("input", () => {
-    nameError.hidden = true;
-    nameInput.closest(".field").classList.remove("has-error");
-  });
-
-  $("#rsvpEditBtn").addEventListener("click", () => {
-    done.hidden = true;
-    form.hidden = false;
-    status.textContent = "";
-    status.classList.remove("is-ok");
-    try {
-      const saved = JSON.parse(localStorage.getItem(RSVP_KEY) || "null");
-      if (saved) {
-        nameInput.value = saved.name || "";
-        const radio = form.querySelector(`input[name="attendance"][value="${saved.attendance}"]`);
-        if (radio) radio.checked = true;
-        $("#rsvpGuests").value = saved.guests || "1";
-        $("#rsvpNotes").value = saved.notes || "";
-      }
-    } catch (err) { /* ignore */ }
-    nameInput.focus();
-  });
-
-  form.addEventListener("submit", (e) => {
-    e.preventDefault();
-    const name = nameInput.value.trim();
-    if (!name) {
-      nameError.hidden = false;
-      nameInput.closest(".field").classList.add("has-error");
-      nameInput.focus();
-      return;
-    }
-    nameError.hidden = true;
-    nameInput.closest(".field").classList.remove("has-error");
-
-    const submitBtn = $("#rsvpSubmit");
-    submitBtn.disabled = true;
-    submitBtn.textContent = "Mengirim…";
-
-    window.setTimeout(() => {
-      const record = {
-        name,
-        attendance: form.attendance.value,
-        guests: $("#rsvpGuests").value,
-        notes: $("#rsvpNotes").value.trim(),
-        submittedAt: new Date().toISOString(),
-      };
-      try {
-        localStorage.setItem(RSVP_KEY, JSON.stringify(record));
-      } catch (err) { /* storage full/blocked — demo continues */ }
-      submitBtn.disabled = false;
-      submitBtn.textContent = "Kirim Konfirmasi";
-      status.textContent = "";
-      showDone(record);
-    }, 500);
-  });
-}
-
-/* ---------- 12. WISHES / GUESTBOOK (localStorage) ---------- */
+/* ---------- 11. WISHES / GUESTBOOK (localStorage) ---------- */
 const WISHES_KEY = "wedding-wishes";
 const MAX_WISHES = 200;
 
@@ -670,7 +581,7 @@ function initWishes() {
   });
 }
 
-/* ---------- 13. MUSIC (DOM element, gesture-driven, fade) ---------- */
+/* ---------- 12. MUSIC (DOM element, gesture-driven, fade) ---------- */
 function initMusic() {
   const toggle = $("#musicToggle");
   const audio = $("#bgMusic");
@@ -744,7 +655,7 @@ function initMusic() {
   });
 }
 
-/* ---------- 14. NAVIGATION ---------- */
+/* ---------- 13. NAVIGATION ---------- */
 function initNavigation() {
   const navToggle = $("#navToggle");
   const sheet = $("#navSheet");
@@ -781,7 +692,7 @@ function initNavigation() {
   );
 
   /* active section highlight */
-  const ids = ["hero", "couple", "events", "gallery", "rsvp", "wishes"];
+  const ids = ["hero", "couple", "events", "gallery", "wishes"];
   const sections = ids.map((id) => document.getElementById(id)).filter(Boolean);
   if ("IntersectionObserver" in window && sections.length) {
     const navObserver = new IntersectionObserver(
@@ -800,7 +711,7 @@ function initNavigation() {
   }
 }
 
-/* ---------- 15. SCROLL TO TOP + REVEALS ---------- */
+/* ---------- 14. SCROLL TO TOP + REVEALS ---------- */
 function initScrollTop() {
   const btn = $("#scrollTopBtn");
   if (!btn) return;
@@ -843,7 +754,7 @@ function initReveals() {
   targets.forEach((t) => revealObserver.observe(t));
 }
 
-/* ---------- 16. BOOT ---------- */
+/* ---------- 15. BOOT ---------- */
 function init() {
   applyGuestName();
   initCover();
@@ -853,7 +764,6 @@ function init() {
   initGallery();
   initQrModal();
   initClipboard();
-  initRsvp();
   initWishes();
   initMusic();
   initNavigation();

@@ -1,4 +1,4 @@
-# Undangan Pernikahan — Alya & Raka
+# Undangan Pernikahan — Arkhul & Resti
 
 A premium, offline-capable digital wedding invitation built with
 **HTML5 + CSS3 + vanilla JavaScript only** — no frameworks, no build step,
@@ -8,7 +8,7 @@ no network dependencies at runtime.
 
 - Full-screen opening cover with guest personalisation (`index.html?to=Nama+Tamu`)
 - Hero, quote, couple profiles, events, live countdown, love-story timeline,
-  gallery with fullscreen lightbox, RSVP (simulated), cashless gift section
+  gallery with fullscreen lightbox, cashless gift section
   with copy-to-clipboard + QRIS modal, wishes guestbook, closing
 - Client-side generated `.ics` calendar files ("Simpan ke Kalender")
 - Google Maps deep links for navigation
@@ -44,10 +44,9 @@ Everything editable lives in **one object at the top of [`js/app.js`](js/app.js)
 
 ```js
 const invitationData = {
-  couple:     { bride: "...", groom: "..." },
-  date:       "...",
-  weddingDateTime: "ISO datetime with +08:00 offset",
-  venue:      { name: "...", address: "..." },
+  couple:     { bride: "Nurfadilla Resti Harisa, S.Pt", groom: "Arkhul Prakashandy Putra, S.Pt" },
+  date:       "Kamis, 8 Oktober 2026 & Sabtu, 10 Oktober 2026",
+  weddingDateTime: "2026-10-08T10:00:00+08:00",
   events:     [ /* akad, resepsi — times, venue, ICS start/end */ ],
   story:      [ /* timeline entries */ ],
   gallery:    [ /* src, alt, aspect ratio */ ],
@@ -56,7 +55,7 @@ const invitationData = {
 };
 ```
 
-A non-developer can change names, dates, venue, bank details and gallery
+A non-developer can change names, dates, events, bank details and gallery
 images by editing only that object. Static prose (hero message, quote,
 parent names, closing) stays in `index.html`.
 
@@ -72,14 +71,12 @@ QRIS image before real use.
 
 ## Assets
 
-`assets/audio/ambient-loop.wav` is a real 30-second seamlessly looping
-ambient pad (generated locally by `assets/audio/make_ambient.py`, stdlib
-Python only); it is only fetched when the user first presses play, and fades
-in/out over ~1.5 s.
+`assets/audio/leberch-invitation-wedding.mp3` is the background track; it is
+only fetched when the user first presses play, and fades in/out over ~1.5 s.
 
 ## Limitations (frontend-only by design)
 
-- RSVP and wishes are stored in `localStorage` on each visitor's device —
+- The wishes guestbook is stored in `localStorage` on each visitor's device —
   there is no backend and nothing is sent anywhere. The invitation text
   states this honestly.
 - Wishes are seeded with demo entries locally; each visitor sees their own.

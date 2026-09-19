@@ -387,8 +387,8 @@ button { font: inherit; color: inherit; cursor: pointer; }
 }
 .gallery__item:focus-visible { outline-offset: 2px; }
 
-/* ---------- 13. RSVP ---------- */
-.rsvp__form, .wishes__form {
+/* ---------- 13. WISHES FORM (shared form primitives) ---------- */
+.wishes__form {
   max-width: 30rem; margin-inline: auto;
   display: grid; gap: 1.25rem;
 }
@@ -416,39 +416,8 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .field__error { font-size: .8rem; color: #a04b3a; }
 .field input::placeholder, .field textarea::placeholder { color: #b3a78e; }
 
-.seg {
-  display: grid; grid-template-columns: 1fr 1fr;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius);
-  overflow: clip;
-  background: var(--color-surface);
-}
-.seg__opt { position: relative; }
-.seg__opt input { position: absolute; opacity: 0; inset: 0; cursor: pointer; }
-.seg__opt span {
-  display: block; text-align: center;
-  padding: .75rem .5rem;
-  font-size: .85rem; letter-spacing: .08em;
-  transition: background-color .25s var(--ease), color .25s var(--ease);
-}
-.seg__opt input:checked + span { background: var(--color-accent-deep); color: var(--color-on-dark); }
-.seg__opt input:focus-visible + span { outline: 2px solid var(--color-accent); outline-offset: -3px; }
-
 .form-status { font-size: .88rem; color: #a04b3a; }
 .form-status.is-ok { color: var(--color-accent-deep); }
-.rsvp__note { font-size: .78rem; color: var(--color-muted); text-align: center; }
-.rsvp__done {
-  max-width: 30rem; margin-inline: auto;
-  display: grid; justify-items: center; gap: .7rem;
-  text-align: center;
-  padding: 2rem 1.4rem;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  background: var(--color-surface);
-  color: var(--color-accent-deep);
-}
-.rsvp__done strong { font-family: var(--font-display); font-size: 1.3rem; }
-.rsvp__done span { color: var(--color-muted); }
 
 /* ---------- 14. GIFT ---------- */
 .gift__grid {
