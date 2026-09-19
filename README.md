@@ -7,6 +7,7 @@ no network dependencies at runtime.
 ## Features
 
 - Full-screen opening cover with guest personalisation (`index.html?to=Nama+Tamu`)
+- Multi-owner links: one invitation shared by both families (`index.html?owner=pria` / `?owner=wanita`)
 - Hero, quote, couple profiles, events, live countdown, love-story timeline,
   gallery with fullscreen lightbox, cashless gift section
   with copy-to-clipboard, wishes guestbook, closing
@@ -38,6 +39,22 @@ http://localhost:8099/?to=Budi%20Santoso
 The cover displays "Kepada: Budi Santoso". The value is rendered with
 `textContent` only (never `innerHTML`) and is limited to 60 characters.
 
+## Multi-owner links (undangan dipakai dua pihak)
+
+One invitation, two links — each family sees **its own reception and its own bank account**,
+while the akad, couple profiles, story, gallery and guestbook stay shared:
+
+| Link | What is shown |
+|---|---|
+| `?owner=pria` (alias `?owner=groom`) | akad + the groom family's reception + the groom family's account |
+| `?owner=wanita` (alias `?owner=bride`) | akad + the bride family's reception + the bride family's account |
+| `?owner=semua` (alias `all`/`both`/`gabungan`) | every event and both accounts, with a family badge on each reception card |
+| no parameter, or an unknown value | the **groom** view (the default) |
+
+Combine with a guest name: `?to=Budi%20Santoso&owner=pria`.
+The `owner` value is read from the URL only — it is never stored on the device, and each
+family simply keeps its own link. This is why the plain URL shows the groom view.
+
 ## Customising the content
 
 Everything editable lives in **one object at the top of [`js/app.js`](js/app.js)**:
@@ -46,17 +63,24 @@ Everything editable lives in **one object at the top of [`js/app.js`](js/app.js)
 const invitationData = {
   couple:     { bride: "Nurfadilla Resti Harisda, S.Pt", groom: "Arkhul Prakashandy Putra, S.Pt" },
   date:       "Kamis, 8 Oktober 2026 & Sabtu, 10 Oktober 2026",
-  weddingDateTime: "2026-10-08T10:00:00+08:00",
-  events:     [ /* akad, resepsi — times, venue, ICS start/end */ ],
+  sharedEvents: [ /* akad — shown on BOTH owner links */ ],
+  owners: {
+    groom: {
+      host:   "Keluarga Mempelai Pria",
+      events: [ /* this family's reception — times, venue, ICS start/end */ ],
+      bank:   { name, accountName, accountNumber },
+    },
+    bride: { /* same shape */ },
+  },
   story:      [ /* timeline entries */ ],
   gallery:    [ /* src, alt, aspect ratio */ ],
-  bank:       { name, accountName, accountNumber },
   demoWishes: [ /* seeded guestbook entries */ ],
 };
 ```
 
 A non-developer can change names, dates, events, bank details and gallery
-images by editing only that object. Static prose (hero message, quote,
+images by editing only that object — including which reception and which account
+belongs to which family (`owners.groom` / `owners.bride`). Static prose (hero message, quote,
 parent names, closing) stays in `index.html`.
 
 ## Replacing artwork
