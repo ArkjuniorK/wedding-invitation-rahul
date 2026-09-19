@@ -297,14 +297,24 @@ function initEvents() {
   const list = $("#eventsList");
   if (!list) return;
 
-  invitationData.events.forEach((ev) => {
+  const showHost = activeOwnerKeys(ownerState.key).length > 1;
+  list.textContent = "";
+
+  activeEvents(ownerState.key).forEach((ev) => {
     const card = document.createElement("article");
     card.className = "event-card";
     card.dataset.reveal = "";
+    card.dataset.owner = ev.ownerKey || "shared";
 
     const kind = document.createElement("p");
     kind.className = "event-card__kind";
     kind.textContent = ev.kind;
+    if (showHost && ev.host) {
+      const host = document.createElement("p");
+      host.className = "event-card__owner";
+      host.textContent = ev.host;
+      card.append(host);
+    }
 
     const name = document.createElement("h3");
     name.className = "event-card__name";
