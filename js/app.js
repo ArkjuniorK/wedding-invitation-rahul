@@ -531,6 +531,49 @@ function initGallery() {
   });
 }
 
+/* ---------- 9b. GIFT (satu blok per pihak) ---------- */
+function fillGiftCard(tpl, owner, showOwner) {
+  if (!tpl || !owner) return null;
+  const node = tpl.content.firstElementChild.cloneNode(true);
+  const badge = node.querySelector(".gift__owner");
+  if (badge) {
+    if (showOwner) badge.textContent = owner.host;
+    else badge.remove();
+  }
+  return node;
+}
+
+function initGift() {
+  const grid = $("#giftGrid");
+  if (!grid) return;
+  const tpl = $("#giftBankTpl");
+  if (!tpl) return;
+  const owners = activeBanks(ownerState.key);
+  const showOwner = owners.length > 1;
+  grid.textContent = "";
+
+  owners.forEach((owner) => {
+    const bank = owner.bank;
+    if (!bank) return;
+
+    const card = fillGiftCard(tpl, owner, showOwner);
+    if (card) {
+      const name = card.querySelector(".gift__bank-name");
+      if (name) name.textContent = bank.name;
+      const holder = card.querySelector(".gift__holder");
+      if (holder) holder.textContent = `a.n. ${bank.accountName}`;
+      const number = card.querySelector(".gift__number");
+      if (number) number.textContent = bank.accountNumber;
+      const copy = card.querySelector(".gift__copy");
+      if (copy) {
+        copy.setAttribute("aria-label", `Salin nomor rekening ${bank.name} milik ${bank.accountName}`);
+        copy.addEventListener("click", () => copyToClipboard(bank.accountNumber, copy));
+      }
+      grid.append(card);
+    }
+  });
+}
+
 /* ---------- 10. CLIPBOARD (dipakai tiap tombol rekening) ---------- */
 function copyToClipboard(text, btn) {
   function fallback() {
@@ -565,14 +608,6 @@ function copyToClipboard(text, btn) {
   } else {
     flash(fallback());
   }
-}
-
-function initClipboard() {
-  const btn = $("#copyBankBtn");
-  if (!btn) return;
-  const number = invitationData.bank.accountNumber;
-
-  btn.addEventListener("click", () => copyToClipboard(number, btn));
 }
 
 /* ---------- 11. WISHES / GUESTBOOK (localStorage) ---------- */
@@ -863,9 +898,9 @@ function init() {
   initCover();
   initCountdown();
   initEvents();
+  initGift();
   initStory();
   initGallery();
-  initClipboard();
   initWishes();
   initMusic();
   initNavigation();

@@ -441,6 +441,14 @@ button { font: inherit; color: inherit; cursor: pointer; }
   box-shadow: var(--shadow-soft);
 }
 .gift__icon { color: var(--color-gold); margin-inline: auto; }
+.gift__owner {
+  font-family: var(--font-body);
+  font-size: var(--fs-eyebrow);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+  margin: 0 0 0.45rem;
+}
 .gift__card h3 { margin-top: .7rem; font-family: var(--font-display); font-size: 1.3rem; font-weight: 500; }
 .gift__holder { margin-top: .3rem; color: var(--color-muted); font-size: .92rem; }
 .gift__number {
