@@ -177,11 +177,13 @@ const invitationData = {
     },
   ],
 
-  // Ucapan: dibaca dari data/wishes.json. Isi `backend` bila memakai penyimpanan bersama
-  // (Firebase Realtime Database). Selama backend null, situs tetap jalan dengan JSON saja.
+  // Ucapan: Firestore (collection "wishes") adalah sumber utama; data/wishes.json
+  // hanyalah cadangan bila Firestore tidak dapat dimuat (offline / rules belum dibuka).
+  // `backend` diisi SAAT RUNTIME dari window.wishesBackend (jembatan di index.html).
   wishes: {
     seedUrl: "data/wishes.json",
-    backend: null, // contoh: { url: "https://<proyek>-default-rtdb.asia-southeast1.firebasedatabase.app" }
+    backend: null, // diisi runtime: { kind: "firestore", collection: "wishes" } bila jembatan terdeteksi
+    degraded: [], // alasan bagian ucapan berjalan terbatas (tanpa console noise), mis. ["firestore"]
   },
 
   bank: {
@@ -730,68 +732,106 @@ function copyToClipboard(text, btn) {
   }
 }
 
-/* ---------- 11. WISHES / GUESTBOOK (data/wishes.json + backend bersama opsional) ---------- */
-const WISH_LIMITS = { name: 40, message: 200 };
+/* ---------- 11. WISHES / GUESTBOOK (Firestore via window.wishesBackend, cadangan data/wishes.json) ---------- */
+const WISH_LIMITS = { name: 40, wish: 200 };
 
-/* Normalisasi satu entri ucapan dari JSON/backend; kembalikan null bila tidak layak. */
+/* Catat bahwa bagian ucapan berjalan dalam mode terbatas. Sengaja TIDAK memakai console.*
+   supaya console pengunjung tetap bersih; statusnya bisa diperiksa lewat
+   `invitationData.wishes.degraded` (mis. "firestore", "seed", "firestore-submit"). */
+function tandaiDegradasi(alasan) {
+  const w = invitationData.wishes;
+  if (!Array.isArray(w.degraded)) w.degraded = [];
+  if (!w.degraded.includes(alasan)) w.degraded.push(alasan);
+}
+
+/* Tunggu jembatan Firestore dari index.html. Resolve window.wishesBackend bila sudah ada,
+   else dengarkan event "wishes-backend-ready" (+ timeout -> resolve null).
+   TIDAK menahan render: data/wishes.json tetap dirender lebih dulu. */
+function waitForWishesBackend(timeoutMs = 5000) {
+  if (window.wishesBackend) return Promise.resolve(window.wishesBackend);
+  return new Promise((resolve) => {
+    let selesai = false;
+    const finish = (value) => {
+      if (selesai) return;
+      selesai = true;
+      window.clearTimeout(timer);
+      resolve(value);
+    };
+    const timer = window.setTimeout(() => finish(null), timeoutMs);
+    window.addEventListener(
+      "wishes-backend-ready",
+      () => finish(window.wishesBackend),
+      { once: true },
+    );
+  });
+}
+
+/* Normalisasi satu entri ucapan dari Firestore/JSON; kembalikan null bila tidak layak.
+   `wish` boleh datang dari `wish` atau `message` (kompatibel dengan data/wishes.json).
+   Entri tanpa name DAN wish dibuang; panjang dipotong 40/200.
+   createdAt dinormalkan jadi timestamp (Number) atau null. */
 function normalizeWish(raw) {
   if (!raw || typeof raw !== "object") return null;
+  const id = typeof raw.id === "string" && raw.id ? raw.id : "";
   const name = String(raw.name ?? "").trim().slice(0, WISH_LIMITS.name);
-  const message = String(raw.message ?? "").trim().slice(0, WISH_LIMITS.message);
-  if (!name || !message) return null;
-  const createdAt = typeof raw.createdAt === "string" ? raw.createdAt
-    : typeof raw.ts === "number" ? new Date(raw.ts).toISOString() : "";
-  return { name, message, createdAt };
-}
-
-const wishTime = (w) => { const t = Date.parse(w.createdAt); return Number.isNaN(t) ? 0 : t; };
-const wishKey = (w) => `${w.name}\u0000${w.message}\u0000${w.createdAt}`;
-
-/* Baca data/wishes.json. Gagal (404, file://, JSON rusak) -> [] tanpa error di console. */
-async function fetchSeedWishes() {
-  try {
-    const res = await fetch(invitationData.wishes.seedUrl);
-    if (!res.ok) return [];
-    const data = await res.json();
-    const arr = Array.isArray(data.wishes) ? data.wishes : [];
-    return arr.map(normalizeWish).filter(Boolean).sort((a, b) => wishTime(b) - wishTime(a));
-  } catch (err) {
-    return [];
+  const wish = String(raw.wish ?? raw.message ?? "").trim().slice(0, WISH_LIMITS.wish);
+  if (!name && !wish) return null;
+  let createdAt = null;
+  if (typeof raw.createdAt === "number" && Number.isFinite(raw.createdAt)) {
+    createdAt = raw.createdAt;
+  } else if (typeof raw.createdAt === "string" && raw.createdAt) {
+    const t = Date.parse(raw.createdAt);
+    if (!Number.isNaN(t)) createdAt = t;
   }
+  return { id, name, wish, createdAt };
 }
 
-/* Baca semua ucapan dari backend bersama. backend null / gagal -> null (tak ada data baru). */
-async function fetchRemoteWishes() {
-  const backend = invitationData.wishes.backend;
-  if (!backend || !backend.url) return null;
-  try {
-    const res = await fetch(
-      `${backend.url.replace(/\/+$/, "")}/wishes.json`,
-    );
-    if (!res.ok) return null;
-    const data = await res.json();
-    const arr = data && typeof data === "object" ? Object.values(data) : [];
-    return arr.map(normalizeWish).filter(Boolean).sort((a, b) => wishTime(b) - wishTime(a));
-  } catch (err) {
-    return null;
-  }
+/* Urut terbaru dulu: pakai createdAt bila ada; entri tanpa createdAt diletakkan setelah
+   yang punya, urut id DESC. Kalau tidak ada createdAt sama sekali -> urut id DESC. */
+function sortWishes(list) {
+  const adaCreatedAt = list.some((w) => w.createdAt !== null && w.createdAt !== undefined);
+  const byIdDesc = (a, b) => String(b.id).localeCompare(String(a.id));
+  if (!adaCreatedAt) return [...list].sort(byIdDesc);
+  return [...list].sort((a, b) => {
+    if (a.createdAt !== null && b.createdAt !== null) return b.createdAt - a.createdAt;
+    if (a.createdAt !== null) return -1;
+    if (b.createdAt !== null) return 1;
+    return byIdDesc(a, b);
+  });
 }
 
-/* Gabung tanpa duplikat (kunci: name+message+createdAt), urut terbaru dulu. */
-function mergeWishes(a, b) {
+/* Buang duplikat: kunci utama `id`, fallback "name|wish" (JSON cadangan punya id kosong). */
+function dedupeWishes(list) {
   const seen = new Set();
   const out = [];
-  for (const w of [...(a || []), ...(b || [])]) {
-    const key = wishKey(w);
+  for (const w of list) {
+    const key = w.id || `${w.name}|${w.wish}`;
     if (seen.has(key)) continue;
     seen.add(key);
     out.push(w);
   }
-  return out.sort((a, b) => wishTime(b) - wishTime(a));
+  return out;
 }
 
-function formatWishDate(iso) {
-  const d = new Date(iso);
+/* Baca data/wishes.json (cadangan). Gagal (404, file://, JSON rusak) -> [] tanpa error di console. */
+async function fetchSeedWishes() {
+  try {
+    const res = await fetch(invitationData.wishes.seedUrl);
+    if (!res.ok) {
+      tandaiDegradasi("seed");
+      return [];
+    }
+    const data = await res.json();
+    const arr = Array.isArray(data.wishes) ? data.wishes : [];
+    return sortWishes(dedupeWishes(arr.map(normalizeWish).filter(Boolean)));
+  } catch (err) {
+    tandaiDegradasi("seed");
+    return [];
+  }
+}
+
+function formatWishDate(ts) {
+  const d = new Date(ts);
   if (Number.isNaN(d.getTime())) return "";
   return d.toLocaleDateString("id-ID", {
     day: "numeric",
@@ -806,8 +846,7 @@ function buildWishCard(wish) {
 
   const msg = document.createElement("p");
   msg.className = "wish-card__msg";
-  msg.textContent =
-    wish.message; /* textContent only — never innerHTML for user content */
+  msg.textContent = wish.wish; /* textContent only — never innerHTML for user content */
 
   const meta = document.createElement("p");
   meta.className = "wish-card__meta";
@@ -818,9 +857,9 @@ function buildWishCard(wish) {
 
   meta.append(name);
 
-  if (wish.createdAt) {
+  if (wish.createdAt !== null && wish.createdAt !== undefined) {
     const date = document.createElement("time");
-    date.dateTime = wish.createdAt;
+    date.dateTime = new Date(wish.createdAt).toISOString();
     date.textContent = formatWishDate(wish.createdAt);
     meta.append(date);
   }
@@ -851,94 +890,116 @@ async function initWishes() {
   const emptyEl = $("#wishesEmpty");
   if (!list || !form) return;
 
-  /* 1. Render segera dari JSON supaya isi langsung tampil. */
-  let seed = await fetchSeedWishes();
-  renderWishList(seed, list, emptyEl);
+  try {
+    /* 1. Render segera dari JSON cadangan — first paint cepat, tidak menunggu Firestore. */
+    const seed = await fetchSeedWishes();
+    renderWishList(seed, list, emptyEl);
 
-  const setStatus = (text, ok) => {
-    status.textContent = text;
-    status.classList.toggle("is-ok", ok);
-    window.setTimeout(() => {
-      status.textContent = "";
-      status.classList.remove("is-ok");
-    }, 5000);
-  };
+    /* 2. Daftar kosong + backend belum selesai -> tampilkan "Memuat ucapan…" sementara,
+          lalu kembalikan teks aslinya setelah selesai (jangan biarkan menggantung). */
+    const emptyTextAsli = emptyEl ? emptyEl.textContent : "";
+    const tampilkanMemuat = seed.length === 0 && emptyEl && !window.wishesBackend;
+    if (tampilkanMemuat) emptyEl.textContent = "Memuat ucapan…";
 
-  /* 2. Bila backend bersama diisi, ambil datanya lalu render ulang hasil gabungan. */
-  const backend = invitationData.wishes.backend;
-  if (backend && backend.url) {
-    const remote = await fetchRemoteWishes();
-    if (remote === null) {
-      setStatus("Ucapan bersama belum bisa dimuat.", false);
-    } else {
-      seed = mergeWishes(seed, remote);
-      renderWishList(seed, list, emptyEl);
-    }
-  }
-
-  const nameError = $("#wishNameError");
-  const msgError = $("#wishMsgError");
-  [nameInput, msgInput].forEach((input) =>
-    input.addEventListener("input", () => {
-      const err = input === nameInput ? nameError : msgError;
-      err.hidden = true;
-      input.closest(".field").classList.remove("has-error");
-    }),
-  );
-
-  const submitBtn = form.querySelector('[type="submit"]');
-
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const name = nameInput.value.trim().slice(0, WISH_LIMITS.name);
-    const message = msgInput.value.trim().slice(0, WISH_LIMITS.message);
-    let valid = true;
-
-    if (!name) {
-      nameError.hidden = false;
-      nameInput.closest(".field").classList.add("has-error");
-      valid = false;
-    }
-    if (!message) {
-      msgError.hidden = false;
-      msgInput.closest(".field").classList.add("has-error");
-      valid = false;
-    }
-    if (!valid) return;
-
-    submitBtn.disabled = true;
+    /* 3. Tunggu jembatan Firestore (maks 5 dtk). */
+    let backend = null;
     try {
-      if (backend && backend.url) {
-        /* Pola REST Firebase Realtime Database. */
-        const res = await fetch(
-          `${backend.url.replace(/\/+$/, "")}/wishes.json`,
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ name, message, ts: Date.now() }),
-          },
-        );
-        if (res.ok) {
-          renderWish({ name, message, createdAt: new Date().toISOString() }, list);
-          emptyEl.hidden = true;
+      backend = await waitForWishesBackend();
+    } catch (err) {
+      backend = null;
+    }
+    if (tampilkanMemuat) emptyEl.textContent = emptyTextAsli;
+    invitationData.wishes.backend = backend
+      ? { kind: backend.kind || "firestore", collection: backend.collection || "wishes" }
+      : null;
+
+    /* 4. Bila jembatan ada, Firestore adalah sumber kebenaran. Gagal (mis. rules belum
+          dibuka) -> tetap tampilkan cadangan JSON, tanpa alert, warn sekali saja. */
+    if (backend) {
+      try {
+        const remote = await backend.load();
+        const daftar = sortWishes(dedupeWishes(remote.map(normalizeWish).filter(Boolean)));
+        renderWishList(daftar, list, emptyEl);
+      } catch (err) {
+        /* Mis. rules Firestore belum dibuka: tetap tampilkan cadangan JSON, tanpa alert. */
+        tandaiDegradasi("firestore");
+      }
+    }
+
+    const nameError = $("#wishNameError");
+    const msgError = $("#wishMsgError");
+    [nameInput, msgInput].forEach((input) =>
+      input.addEventListener("input", () => {
+        const err = input === nameInput ? nameError : msgError;
+        if (err) err.hidden = true;
+        input.closest(".field").classList.remove("has-error");
+      }),
+    );
+
+    const setStatus = (text, ok) => {
+      if (!status) return;
+      status.textContent = text;
+      status.classList.toggle("is-ok", ok);
+      window.setTimeout(() => {
+        status.textContent = "";
+        status.classList.remove("is-ok");
+      }, 5000);
+    };
+
+    /* 5. Kirim ucapan: backend ada -> simpan ke Firestore; backend null -> sesi saja.
+          Gagal kirim: form TIDAK dikosongkan, tidak ada kartu palsu. */
+    const submitWish = async (name, wish) => {
+      if (backend) {
+        try {
+          await backend.add(name, wish);
+          renderWish({ id: "", name, wish, createdAt: Date.now() }, list);
+          if (emptyEl) emptyEl.hidden = true;
           form.reset();
           setStatus("Ucapan Anda telah terkirim. Terima kasih!", true);
-        } else {
+        } catch (err) {
+          tandaiDegradasi("firestore-submit");
           setStatus("Ucapan belum berhasil dikirim. Silakan coba lagi.", false);
         }
       } else {
-        /* Tanpa backend: tampil untuk sesi ini saja, tidak disimpan di mana pun. */
-        renderWish({ name, message, createdAt: new Date().toISOString() }, list);
-        emptyEl.hidden = true;
+        /* Firestore tidak termuat: tampil untuk sesi ini saja. */
+        renderWish({ id: "", name, wish, createdAt: Date.now() }, list);
+        if (emptyEl) emptyEl.hidden = true;
         form.reset();
         setStatus("Ucapan tersimpan di perangkat ini untuk sesi ini. Belum tersambung ke penyimpanan bersama.", true);
       }
-    } catch (err) {
-      setStatus("Ucapan belum berhasil dikirim. Silakan coba lagi.", false);
-    } finally {
-      submitBtn.disabled = false;
-    }
-  });
+    };
+
+    const submitBtn = form.querySelector('[type="submit"]');
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const name = nameInput.value.trim().slice(0, WISH_LIMITS.name);
+      const wish = msgInput.value.trim().slice(0, WISH_LIMITS.wish);
+      let valid = true;
+
+      if (!name) {
+        nameError.hidden = false;
+        nameInput.closest(".field").classList.add("has-error");
+        valid = false;
+      }
+      if (!wish) {
+        msgError.hidden = false;
+        msgInput.closest(".field").classList.add("has-error");
+        valid = false;
+      }
+      if (!valid) return;
+
+      if (submitBtn) submitBtn.disabled = true;
+      try {
+        await submitWish(name, wish);
+      } finally {
+        if (submitBtn) submitBtn.disabled = false;
+      }
+    });
+  } catch (err) {
+    /* Jangan biarkan unhandled rejection: daftar JSON tetap tampil seperti semula. */
+    tandaiDegradasi("init");
+  }
 }
 
 /* ---------- 12. MUSIC (DOM element, gesture-driven, fade) ---------- */

@@ -251,9 +251,7 @@
   <script type="module">
     // Import the functions you need from the SDKs you need
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
-    import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-analytics.js";
-    // TODO: Add SDKs for Firebase products that you want to use
-    // https://firebase.google.com/docs/web/setup#available-libraries
+    import { getFirestore, collection, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 
     // Your web app's Firebase configuration
     // For Firebase JS SDK v7.20.0 and later, measurementId is optional
@@ -269,7 +267,31 @@
 
     // Initialize Firebase
     const app = initializeApp(firebaseConfig);
-    const analytics = getAnalytics(app);
+
+    // Analytics opsional: kalau gagal dimuat/diblokir, ucapan JANGAN ikut mati.
+    import("https://www.gstatic.com/firebasejs/12.19.0/firebase-analytics.js")
+      .then(({ getAnalytics }) => getAnalytics(app))
+      .catch(() => {});
+
+    // Jembatan untuk js/app.js (script klasik tidak bisa import).
+    const db = getFirestore(app);
+    window.wishesBackend = {
+      kind: "firestore",
+      collection: "wishes",
+      async load() {
+        const snap = await getDocs(collection(db, "wishes"));
+        return snap.docs.map((doc) => {
+          const v = doc.data() || {};
+          const ts = v.createdAt && typeof v.createdAt.toMillis === "function" ? v.createdAt.toMillis() : null;
+          return { id: doc.id, name: v.name, wish: v.wish !== undefined ? v.wish : v.message, createdAt: ts };
+        });
+      },
+      async add(name, wish) {
+        const ref = await addDoc(collection(db, "wishes"), { name: name, wish: wish });
+        return { id: ref.id };
+      }
+    };
+    window.dispatchEvent(new Event("wishes-backend-ready"));
   </script>
 </body>
 </html>
