@@ -46,9 +46,10 @@ const invitationData = {
           dateLabel: "Sabtu, 10 Oktober 2026",
           timeLabel: "10.00 WITA – Selesai",
           start: "2026-10-10T10:00:00+08:00",
-          end: "2026-10-10T23:00:00+08:00",   // praktis "sampai larut malam" (lihat plan §8 no. 2)
+          end: "2026-10-10T23:00:00+08:00", // praktis "sampai larut malam" (lihat plan §8 no. 2)
           venue: "Bulutanah, Kab. Bone",
-          address: "Jl. Poros Sinjai-Palattae, Cangkano, Desa Bulutanah, Kec. Kajuara, Kab. Bone",
+          address:
+            "Jl. Poros Sinjai-Palattae, Cangkano, Desa Bulutanah, Kec. Kajuara, Kab. Bone",
         },
       ],
       bank: {
@@ -71,7 +72,7 @@ const invitationData = {
           dateLabel: "Kamis, 8 Oktober 2026",
           timeLabel: "19.00 WITA – Selesai",
           start: "2026-10-08T19:00:00+08:00",
-          end: "2026-10-08T23:00:00+08:00",   // .ics: "sampai selesai" dibatasi 23.00 WITA
+          end: "2026-10-08T23:00:00+08:00", // .ics: "sampai selesai" dibatasi 23.00 WITA
           venue: "Sudiang, Kota Makassar",
           address: "Jl. Bahagia No. 56 Lr 1, Kelurahan Sudiang, Kota Makassar",
         },
@@ -105,42 +106,75 @@ const invitationData = {
       start: "2026-10-10T10:00:00+08:00",
       end: "2026-10-10T14:00:00+08:00",
       venue: "Bulutanah, Kab. Bone",
-      address: "Jl. Poros Sinjai-Palattae, Cangkano, Desa Bulutanah, Kec. Kajuara, Kab. Bone",
+      address:
+        "Jl. Poros Sinjai-Palattae, Cangkano, Desa Bulutanah, Kec. Kajuara, Kab. Bone",
     },
   ],
 
-  story: [
-    {
-      year: "2021",
-      title: "Pertemuan Pertama",
-      desc: "Kami dipertemukan di sebuah kegiatan volunteer di Makassar. Obrolan singkat sore itu ternyata menjadi awal dari segalanya.",
-    },
-    {
-      year: "2023",
-      title: "Mulai Menjalin Hubungan",
-      desc: "Setelah dua tahun saling mengenal, kami memantapkan hati untuk berjalan bersama mengenal Tuhan dan satu sama lain.",
-    },
-    {
-      year: "2025",
-      title: "Lamaran",
-      desc: "Di hadapan keluarga besar, Arkhul mengetuk pintu dan meminjam tangan Resti. Restu kedua keluarga kami terima dengan penuh syukur.",
-    },
-    {
-      year: "2026",
-      title: "Hari Pernikahan",
-      desc: "Kini kami memutuskan untuk melangkah lebih jauh: mengikat janji suci di hadapan Tuhan, keluarga, dan sahabat tercinta.",
-    },
-  ],
+  // story: [
+  //   {
+  //     year: "2021",
+  //     title: "Pertemuan Pertama",
+  //     desc: "Kami dipertemukan di sebuah kegiatan volunteer di Makassar. Obrolan singkat sore itu ternyata menjadi awal dari segalanya.",
+  //   },
+  //   {
+  //     year: "2023",
+  //     title: "Mulai Menjalin Hubungan",
+  //     desc: "Setelah dua tahun saling mengenal, kami memantapkan hati untuk berjalan bersama mengenal Tuhan dan satu sama lain.",
+  //   },
+  //   {
+  //     year: "2025",
+  //     title: "Lamaran",
+  //     desc: "Di hadapan keluarga besar, Arkhul mengetuk pintu dan meminjam tangan Resti. Restu kedua keluarga kami terima dengan penuh syukur.",
+  //   },
+  //   {
+  //     year: "2026",
+  //     title: "Hari Pernikahan",
+  //     desc: "Kini kami memutuskan untuk melangkah lebih jauh: mengikat janji suci di hadapan Tuhan, keluarga, dan sahabat tercinta.",
+  //   },
+  // ],
 
   gallery: [
-    { src: "assets/images/gallery1.webp", alt: "Potret berdua Arkhul dan Resti di taman", ratio: "4 / 5" },
-    { src: "assets/images/gallery2.webp", alt: "Lanskap taman lokasi akad nikah", ratio: "10 / 7" },
-    { src: "assets/images/gallery3.webp", alt: "Detail rangkaian bunga dan cincin pernikahan", ratio: "7 / 9" },
-    { src: "assets/images/gallery4.webp", alt: "Meja dekorasi resepsi dengan bunga dan lilin", ratio: "9 / 6.2" },
-    { src: "assets/images/gallery5.webp", alt: "Kedua mempelai berjalan di bawah pohon", ratio: "3.8 / 4.75" },
-    { src: "assets/images/gallery6.webp", alt: "Detail tangan mempelai dengan cincin", ratio: "11 / 7" },
-    { src: "assets/images/gallery7.webp", alt: "Kotak cincin di atas hiasan bunga saat lamaran", ratio: "6.4 / 8.8" },
-    { src: "assets/images/gallery8.webp", alt: "Tarian pertama di bawah lampu gantung", ratio: "9 / 6.4" },
+    {
+      src: "assets/images/gallery1.webp",
+      alt: "Potret berdua Arkhul dan Resti di taman",
+      ratio: "4 / 5",
+    },
+    {
+      src: "assets/images/gallery2.webp",
+      alt: "Lanskap taman lokasi akad nikah",
+      ratio: "10 / 7",
+    },
+    {
+      src: "assets/images/gallery3.webp",
+      alt: "Detail rangkaian bunga dan cincin pernikahan",
+      ratio: "7 / 9",
+    },
+    {
+      src: "assets/images/gallery4.webp",
+      alt: "Meja dekorasi resepsi dengan bunga dan lilin",
+      ratio: "9 / 6.2",
+    },
+    {
+      src: "assets/images/gallery5.webp",
+      alt: "Kedua mempelai berjalan di bawah pohon",
+      ratio: "3.8 / 4.75",
+    },
+    {
+      src: "assets/images/gallery6.webp",
+      alt: "Detail tangan mempelai dengan cincin",
+      ratio: "11 / 7",
+    },
+    {
+      src: "assets/images/gallery7.webp",
+      alt: "Kotak cincin di atas hiasan bunga saat lamaran",
+      ratio: "6.4 / 8.8",
+    },
+    {
+      src: "assets/images/gallery8.webp",
+      alt: "Tarian pertama di bawah lampu gantung",
+      ratio: "9 / 6.4",
+    },
   ],
 
   bank: {
@@ -149,20 +183,16 @@ const invitationData = {
     accountNumber: "1234567890",
   },
 
-  demoWishes: [
-    { name: "Sinta Maharani", message: "Selamat menempuh hidup baru, Arkhul & Resti! Semoga menjadi keluarga yang sakinah, mawaddah, warahmah. 🤍", date: "2026-08-30" },
-    { name: "Dimas & Keluarga", message: "Barakallahu lakuma wa baraka alaikuma. Turut berbahagia untuk kalian berdua!", date: "2026-09-02" },
-    { name: "Om Anton", message: "Selamat ya Resti & Arkhul! Semoga langgeng sampai kakek-nenek, diundang akadnya tapi nunggu resepsi dulu.", date: "2026-09-05" },
-    { name: "Rani Puspita", message: "Aku turut berbahagia! Semoga cinta kalian terus tumbuh dan rumah tangga kalian dipenuhi tawa.", date: "2026-09-10" },
-    { name: "Bimo Aditya", message: "Congrats, bro Arkhul! Jaga Resti baik-baik ya. Sampai jumpa tanggal 8 Oktober nanti.", date: "2026-09-12" },
-  ],
+  demoWishes: [],
 };
 
 /* ---------- 2. SHORT HELPERS ---------- */
 const $ = (sel, root = document) => root.querySelector(sel);
 const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
 
-const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const prefersReducedMotion = window.matchMedia(
+  "(prefers-reduced-motion: reduce)",
+).matches;
 
 function pad2(n) {
   return String(n).padStart(2, "0");
@@ -171,8 +201,12 @@ function pad2(n) {
 /* ---------- 2b. OWNER RESOLUTION (?owner=pria|wanita|semua) ---------- */
 const OWNER_PARAM = "owner";
 const OWNER_ALIASES = {
-  pria: "groom", groom: "groom", "mempelai-pria": "groom",
-  wanita: "bride", bride: "bride", "mempelai-wanita": "bride",
+  pria: "groom",
+  groom: "groom",
+  "mempelai-pria": "groom",
+  wanita: "bride",
+  bride: "bride",
+  "mempelai-wanita": "bride",
 };
 
 /* "all" = tampil semua; "groom"/"bride" = satu pihak.
@@ -181,9 +215,17 @@ const DEFAULT_OWNER = "groom";
 
 function resolveOwnerKey(search) {
   try {
-    const raw = (new URLSearchParams(search).get(OWNER_PARAM) || "").trim().toLowerCase();
+    const raw = (new URLSearchParams(search).get(OWNER_PARAM) || "")
+      .trim()
+      .toLowerCase();
     if (!raw) return DEFAULT_OWNER;
-    if (raw === "all" || raw === "semua" || raw === "both" || raw === "gabungan") return "all";
+    if (
+      raw === "all" ||
+      raw === "semua" ||
+      raw === "both" ||
+      raw === "gabungan"
+    )
+      return "all";
     return OWNER_ALIASES[raw] || DEFAULT_OWNER;
   } catch (err) {
     return DEFAULT_OWNER;
@@ -192,17 +234,24 @@ function resolveOwnerKey(search) {
 
 function activeOwnerKeys(ownerKey) {
   const keys = Object.keys(invitationData.owners);
-  if (ownerKey && ownerKey !== "all" && keys.includes(ownerKey)) return [ownerKey];
+  if (ownerKey && ownerKey !== "all" && keys.includes(ownerKey))
+    return [ownerKey];
   return keys;
 }
 
 /* Acara yang tampil = shared + resepsi milik pihak yang aktif. */
 function activeEvents(ownerKey) {
-  const shared = invitationData.sharedEvents.map((ev) => ({ ...ev, ownerKey: null, host: null }));
+  const shared = invitationData.sharedEvents.map((ev) => ({
+    ...ev,
+    ownerKey: null,
+    host: null,
+  }));
   const perOwner = activeOwnerKeys(ownerKey).flatMap((k) =>
     invitationData.owners[k].events.map((ev) => ({
-      ...ev, ownerKey: k, host: invitationData.owners[k].host,
-    }))
+      ...ev,
+      ownerKey: k,
+      host: invitationData.owners[k].host,
+    })),
   );
   return [...shared, ...perOwner];
 }
@@ -239,7 +288,8 @@ function applyGuestName() {
   el.textContent = guest || "Bapak/Ibu/Saudara/i";
 
   const prefix = $(".cover__to-prefix", $("#cover") || document);
-  if (!guest && prefix && prefix.parentNode) prefix.parentNode.removeChild(prefix);
+  if (!guest && prefix && prefix.parentNode)
+    prefix.parentNode.removeChild(prefix);
 }
 
 /* Label pihak muncul pada tampilan satu pihak (termasuk link default = pria),
@@ -273,9 +323,12 @@ function initCover() {
     if (typeof window.__weddingStartMusic === "function") {
       window.__weddingStartMusic();
     }
-    window.setTimeout(() => {
-      if (cover.parentNode) cover.parentNode.removeChild(cover);
-    }, prefersReducedMotion ? 50 : 1100);
+    window.setTimeout(
+      () => {
+        if (cover.parentNode) cover.parentNode.removeChild(cover);
+      },
+      prefersReducedMotion ? 50 : 1100,
+    );
   });
 }
 
@@ -283,7 +336,10 @@ function initCover() {
 function initCountdown() {
   const target = countdownTarget();
   const els = {
-    d: $("#cdDays"), h: $("#cdHours"), m: $("#cdMinutes"), s: $("#cdSeconds"),
+    d: $("#cdDays"),
+    h: $("#cdHours"),
+    m: $("#cdMinutes"),
+    s: $("#cdSeconds"),
   };
   const grid = $("#countdownGrid");
   if (!grid || Object.values(els).some((el) => !el)) return;
@@ -299,7 +355,8 @@ function initCountdown() {
     if (diff <= 0) {
       window.clearInterval(timer);
       timer = null;
-      grid.innerHTML = '<p class="countdown__done">Hari bahagia telah tiba — terima kasih atas doa dan restu Anda!</p>';
+      grid.innerHTML =
+        '<p class="countdown__done">Hari bahagia telah tiba — terima kasih atas doa dan restu Anda!</p>';
       grid.removeAttribute("role");
       return;
     }
@@ -359,7 +416,10 @@ function initEvents() {
     mapBtn.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${ev.venue}, ${ev.address}`)}`;
     mapBtn.target = "_blank";
     mapBtn.rel = "noopener";
-    mapBtn.setAttribute("aria-label", `Buka peta lokasi ${ev.name} di Google Maps (tab baru)`);
+    mapBtn.setAttribute(
+      "aria-label",
+      `Buka peta lokasi ${ev.name} di Google Maps (tab baru)`,
+    );
     mapBtn.innerHTML =
       '<svg viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path d="M12 21 s-7-6.2-7-11 a7 7 0 0 1 14 0 c0 4.8-7 11-7 11 Z" fill="none" stroke="currentColor" stroke-width="1.3"/><circle cx="12" cy="10" r="2.4" fill="none" stroke="currentColor" stroke-width="1.3"/></svg> Navigasi';
 
@@ -378,7 +438,11 @@ function initEvents() {
 }
 
 function icsEscape(text) {
-  return String(text).replace(/\\/g, "\\\\").replace(/;/g, "\\;").replace(/,/g, "\\,").replace(/\r?\n/g, "\\n");
+  return String(text)
+    .replace(/\\/g, "\\\\")
+    .replace(/;/g, "\\;")
+    .replace(/,/g, "\\,")
+    .replace(/\r?\n/g, "\\n");
 }
 
 function toIcsUtc(isoWithOffset) {
@@ -417,7 +481,9 @@ function buildIcs(ev) {
 }
 
 function downloadIcs(ev) {
-  const blob = new Blob([buildIcs(ev)], { type: "text/calendar;charset=utf-8" });
+  const blob = new Blob([buildIcs(ev)], {
+    type: "text/calendar;charset=utf-8",
+  });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
@@ -470,7 +536,10 @@ function initGallery() {
     btn.type = "button";
     btn.className = "gallery__item";
     btn.dataset.index = String(i);
-    btn.setAttribute("aria-label", `Perbesar foto ${i + 1} dari ${invitationData.gallery.length}: ${photo.alt}`);
+    btn.setAttribute(
+      "aria-label",
+      `Perbesar foto ${i + 1} dari ${invitationData.gallery.length}: ${photo.alt}`,
+    );
     btn.dataset.reveal = "";
 
     const picture = document.createElement("img");
@@ -490,7 +559,13 @@ function initGallery() {
 
   function evalRatio(ratio) {
     const m = ratio.split("/").map((n) => parseFloat(n.trim()));
-    if (m.length !== 2 || !Number.isFinite(m[0]) || !Number.isFinite(m[1]) || m[0] <= 0 || m[1] <= 0) {
+    if (
+      m.length !== 2 ||
+      !Number.isFinite(m[0]) ||
+      !Number.isFinite(m[1]) ||
+      m[0] <= 0 ||
+      m[1] <= 0
+    ) {
       return 0.75; /* safe default 4:3-ish fallback */
     }
     return m[0] / m[1];
@@ -527,7 +602,9 @@ function initGallery() {
   }
 
   function step(delta) {
-    current = (current + delta + invitationData.gallery.length) % invitationData.gallery.length;
+    current =
+      (current + delta + invitationData.gallery.length) %
+      invitationData.gallery.length;
     updateLightbox();
   }
 
@@ -591,8 +668,13 @@ function initGift() {
       if (number) number.textContent = bank.accountNumber;
       const copy = card.querySelector(".gift__copy");
       if (copy) {
-        copy.setAttribute("aria-label", `Salin nomor rekening ${bank.name} milik ${bank.accountName}`);
-        copy.addEventListener("click", () => copyToClipboard(bank.accountNumber, copy));
+        copy.setAttribute(
+          "aria-label",
+          `Salin nomor rekening ${bank.name} milik ${bank.accountName}`,
+        );
+        copy.addEventListener("click", () =>
+          copyToClipboard(bank.accountNumber, copy),
+        );
       }
       grid.append(card);
     }
@@ -610,7 +692,11 @@ function copyToClipboard(text, btn) {
     document.body.append(ta);
     ta.select();
     let ok = false;
-    try { ok = document.execCommand("copy"); } catch (err) { ok = false; }
+    try {
+      ok = document.execCommand("copy");
+    } catch (err) {
+      ok = false;
+    }
     ta.remove();
     return ok;
   }
@@ -624,12 +710,16 @@ function copyToClipboard(text, btn) {
     }
     window.setTimeout(() => {
       btn.classList.remove("is-copied");
-      if (label && label.nodeType === Node.TEXT_NODE) label.textContent = " Salin Nomor Rekening";
+      if (label && label.nodeType === Node.TEXT_NODE)
+        label.textContent = " Salin Nomor Rekening";
     }, 2200);
   }
 
   if (navigator.clipboard && window.isSecureContext) {
-    navigator.clipboard.writeText(text).then(() => flash(true), () => flash(fallback()));
+    navigator.clipboard.writeText(text).then(
+      () => flash(true),
+      () => flash(fallback()),
+    );
   } else {
     flash(fallback());
   }
@@ -643,20 +733,31 @@ function loadWishes() {
   try {
     const parsed = JSON.parse(localStorage.getItem(WISHES_KEY) || "null");
     if (Array.isArray(parsed)) return parsed.slice(0, MAX_WISHES);
-  } catch (err) { /* corrupted storage — fall through */ }
+  } catch (err) {
+    /* corrupted storage — fall through */
+  }
   return null;
 }
 
 function saveWishes(wishes) {
   try {
-    localStorage.setItem(WISHES_KEY, JSON.stringify(wishes.slice(0, MAX_WISHES)));
-  } catch (err) { /* storage full/blocked — demo continues */ }
+    localStorage.setItem(
+      WISHES_KEY,
+      JSON.stringify(wishes.slice(0, MAX_WISHES)),
+    );
+  } catch (err) {
+    /* storage full/blocked — demo continues */
+  }
 }
 
 function formatWishDate(iso) {
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return "";
-  return d.toLocaleDateString("id-ID", { day: "numeric", month: "long", year: "numeric" });
+  return d.toLocaleDateString("id-ID", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
 }
 
 function renderWish(wish, list) {
@@ -665,7 +766,8 @@ function renderWish(wish, list) {
 
   const msg = document.createElement("p");
   msg.className = "wish-card__msg";
-  msg.textContent = wish.message; /* textContent only — never innerHTML for user content */
+  msg.textContent =
+    wish.message; /* textContent only — never innerHTML for user content */
 
   const meta = document.createElement("p");
   meta.className = "wish-card__meta";
@@ -707,7 +809,7 @@ function initWishes() {
       const err = input === nameInput ? nameError : msgError;
       err.hidden = true;
       input.closest(".field").classList.remove("has-error");
-    })
+    }),
   );
 
   form.addEventListener("submit", (e) => {
@@ -767,7 +869,8 @@ function initMusic() {
       if (t >= 1) {
         window.clearInterval(fadeTimer);
         fadeTimer = null;
-        audio.volume = target; /* land exactly on the target — never leave the ramp at 0 */
+        audio.volume =
+          target; /* land exactly on the target — never leave the ramp at 0 */
         if (done) done();
       }
     }, 50);
@@ -782,13 +885,16 @@ function initMusic() {
   }
 
   function play() {
-    audio.play().then(() => {
-      setUi(true);
-      fadeTo(0.55);
-    }).catch(() => {
-      /* autoplay policy rejected or the asset failed — revert honestly */
-      setUi(false);
-    });
+    audio
+      .play()
+      .then(() => {
+        setUi(true);
+        fadeTo(0.55);
+      })
+      .catch(() => {
+        /* autoplay policy rejected or the asset failed — revert honestly */
+        setUi(false);
+      });
   }
 
   function pause() {
@@ -832,18 +938,30 @@ function initNavigation() {
       requestAnimationFrame(() => sheet.classList.add("is-open"));
     } else {
       sheet.classList.remove("is-open");
-      window.setTimeout(() => { sheet.hidden = true; }, 250);
+      window.setTimeout(() => {
+        sheet.hidden = true;
+      }, 250);
     }
     navToggle.setAttribute("aria-expanded", String(willOpen));
-    navToggle.setAttribute("aria-label", willOpen ? "Tutup menu navigasi" : "Buka menu navigasi");
+    navToggle.setAttribute(
+      "aria-label",
+      willOpen ? "Tutup menu navigasi" : "Buka menu navigasi",
+    );
   });
 
   document.addEventListener("click", (e) => {
-    if (!sheet.hidden && !sheet.contains(e.target) && e.target !== navToggle && !navToggle.contains(e.target)) {
+    if (
+      !sheet.hidden &&
+      !sheet.contains(e.target) &&
+      e.target !== navToggle &&
+      !navToggle.contains(e.target)
+    ) {
       sheet.classList.remove("is-open");
-      window.setTimeout(() => { sheet.hidden = true; }, 250);
+      window.setTimeout(() => {
+        sheet.hidden = true;
+      }, 250);
       navToggle.setAttribute("aria-expanded", "false");
-      }
+    }
   });
 
   links.forEach((link) =>
@@ -851,7 +969,7 @@ function initNavigation() {
       sheet.classList.remove("is-open");
       sheet.hidden = true;
       navToggle.setAttribute("aria-expanded", "false");
-    })
+    }),
   );
 
   /* active section highlight */
@@ -868,7 +986,7 @@ function initNavigation() {
           });
         });
       },
-      { rootMargin: "-40% 0px -55% 0px" }
+      { rootMargin: "-40% 0px -55% 0px" },
     );
     sections.forEach((s) => navObserver.observe(s));
   }
@@ -889,10 +1007,13 @@ function initScrollTop() {
         ticking = false;
       });
     },
-    { passive: true }
+    { passive: true },
   );
   btn.addEventListener("click", () => {
-    window.scrollTo({ top: 0, behavior: prefersReducedMotion ? "auto" : "smooth" });
+    window.scrollTo({
+      top: 0,
+      behavior: prefersReducedMotion ? "auto" : "smooth",
+    });
   });
 }
 
@@ -912,7 +1033,7 @@ function initReveals() {
         }
       });
     },
-    { threshold: 0.12, rootMargin: "0px 0px -6% 0px" }
+    { threshold: 0.12, rootMargin: "0px 0px -6% 0px" },
   );
   targets.forEach((t) => revealObserver.observe(t));
 }
