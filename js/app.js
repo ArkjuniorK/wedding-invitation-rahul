@@ -531,13 +531,9 @@ function initGallery() {
   });
 }
 
-/* ---------- 10. CLIPBOARD ---------- */
-function initClipboard() {
-  const btn = $("#copyBankBtn");
-  if (!btn) return;
-  const number = invitationData.bank.accountNumber;
-
-  function fallbackCopy(text) {
+/* ---------- 10. CLIPBOARD (dipakai tiap tombol rekening) ---------- */
+function copyToClipboard(text, btn) {
+  function fallback() {
     const ta = document.createElement("textarea");
     ta.value = text;
     ta.setAttribute("readonly", "");
@@ -546,18 +542,15 @@ function initClipboard() {
     document.body.append(ta);
     ta.select();
     let ok = false;
-    try {
-      ok = document.execCommand("copy");
-    } catch (err) {
-      ok = false;
-    }
+    try { ok = document.execCommand("copy"); } catch (err) { ok = false; }
     ta.remove();
     return ok;
   }
 
   function flash(ok) {
-    btn.classList.add("is-copied");
+    if (!btn) return;
     const label = btn.lastChild;
+    btn.classList.add("is-copied");
     if (label && label.nodeType === Node.TEXT_NODE) {
       label.textContent = ok ? " Tersalin!" : " Gagal menyalin";
     }
@@ -567,16 +560,19 @@ function initClipboard() {
     }, 2200);
   }
 
-  btn.addEventListener("click", () => {
-    if (navigator.clipboard && window.isSecureContext) {
-      navigator.clipboard.writeText(number).then(
-        () => flash(true),
-        () => flash(fallbackCopy(number))
-      );
-    } else {
-      flash(fallbackCopy(number));
-    }
-  });
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(text).then(() => flash(true), () => flash(fallback()));
+  } else {
+    flash(fallback());
+  }
+}
+
+function initClipboard() {
+  const btn = $("#copyBankBtn");
+  if (!btn) return;
+  const number = invitationData.bank.accountNumber;
+
+  btn.addEventListener("click", () => copyToClipboard(number, btn));
 }
 
 /* ---------- 11. WISHES / GUESTBOOK (localStorage) ---------- */
