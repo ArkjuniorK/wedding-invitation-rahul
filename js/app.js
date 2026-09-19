@@ -15,6 +15,76 @@ const invitationData = {
   date: "Kamis, 8 Oktober 2026 & Sabtu, 10 Oktober 2026",
   weddingDateTime: "2026-10-08T10:00:00+08:00",
 
+  /* ---------- MULTI-OWNER ----------
+     sharedEvents = acara milik berdua (akad).
+     owners.<key>.events = resepsi milik pihak tersebut.
+     owners.<key>.bank   = rekening pihak tersebut.  */
+  sharedEvents: [
+    {
+      id: "akad",
+      kind: "Akad Nikah",
+      name: "Akad Nikah",
+      dateLabel: "Kamis, 8 Oktober 2026",
+      timeLabel: "10.00 WITA",
+      start: "2026-10-08T10:00:00+08:00",
+      end: "2026-10-08T12:00:00+08:00",
+      venue: "Sudiang, Kota Makassar",
+      address: "Jl. Bahagia No. 56 Lr 1, Kelurahan Sudiang, Kota Makassar",
+    },
+  ],
+
+  owners: {
+    groom: {
+      key: "groom",
+      label: "Mempelai Pria",
+      shortName: "Arkhul",
+      host: "Keluarga Mempelai Pria",
+      events: [
+        {
+          id: "resepsi-pria",
+          kind: "Resepsi",
+          name: "Resepsi",
+          dateLabel: "Sabtu, 10 Oktober 2026",
+          timeLabel: "10.00 WITA – Selesai",
+          start: "2026-10-10T10:00:00+08:00",
+          end: "2026-10-10T23:00:00+08:00",   // praktis "sampai larut malam" (lihat plan §8 no. 2)
+          venue: "Bulutanah, Kab. Bone",
+          address: "Jl. Poros Sinjai-Palattae, Cangkano, Desa Bulutanah, Kec. Kajuara, Kab. Bone",
+        },
+      ],
+      bank: {
+        name: "Bank BCA",
+        accountName: "Arkhul Prakashandy Putra",
+        accountNumber: "7325794763",
+      },
+    },
+
+    bride: {
+      key: "bride",
+      label: "Mempelai Wanita",
+      shortName: "Resti",
+      host: "Keluarga Mempelai Wanita",
+      events: [
+        {
+          id: "resepsi-wanita",
+          kind: "Resepsi",
+          name: "Resepsi",
+          dateLabel: "Kamis, 8 Oktober 2026",
+          timeLabel: "19.00 WITA – Selesai",
+          start: "2026-10-08T19:00:00+08:00",
+          end: "2026-10-08T23:00:00+08:00",   // .ics: "sampai selesai" dibatasi 23.00 WITA
+          venue: "Sudiang, Kota Makassar",
+          address: "Jl. Bahagia No. 56 Lr 1, Kelurahan Sudiang, Kota Makassar",
+        },
+      ],
+      bank: {
+        name: "Bank BCA",
+        accountName: "Nurfadilla Resti Harisda",
+        accountNumber: "3650176455",
+      },
+    },
+  },
+
   events: [
     {
       id: "akad",
