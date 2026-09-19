@@ -102,8 +102,9 @@ only fetched when the user first presses play, and fades in/out over ~1.5 s.
 
 ## Ucapan (guestbook)
 
-Ucapan dan doa **dibaca dari file JSON** [`data/wishes.json`](data/wishes.json),
-bukan dari `localStorage`. Skema filenya:
+Ucapan dan doa **dibaca dari Firestore** (collection `wishes` — lihat "Penyimpanan
+bersama" di bawah) dengan [`data/wishes.json`](data/wishes.json) sebagai **cadangan**
+saat Firestore tidak dapat dimuat (offline / aturan belum dibuka). Skema file cadangan:
 
 ```json
 {
@@ -120,73 +121,71 @@ bukan dari `localStorage`. Skema filenya:
 | `message` | wajib, teks, maks 200 karakter |
 | `createdAt` | ISO 8601 dengan offset zona waktu (contoh `2026-10-08T10:15:00+08:00`) |
 
-Cara menambah ucapan manual: edit `data/wishes.json`, tambahkan satu objek ke dalam
-`wishes[]`. **Urutan entri bebas** — situs selalu menampilkan **terbaru di atas**,
-diurutkan otomatis dari `createdAt`. Entri tanpa `name` atau `message` dilewati.
+Cara menambah ucapan manual di cadangan: edit `data/wishes.json`, tambahkan satu objek
+ke dalam `wishes[]`. Entri tanpa `name` atau `message` dilewati.
 
-Catatan penting: file ini dibaca dengan `fetch`, jadi **halaman harus dibuka lewat
-server** (`python3 -m http.server 8099` dari root repo), **bukan** `file://` —
-kalau dibuka lewat `file://` daftar ucapan tetap kosong. Saat daftar kosong tampil
-teks "Jadilah yang pertama memberi ucapan dan doa."
+## Penyimpanan bersama (Firestore)
 
-Tanpa backend, ucapan yang dikirim pengunjung hanya tampil di perangkatnya untuk
-sesi itu saja dan tidak disimpan di mana pun.
-
-## Penyimpanan bersama (opsional)
-
-Supaya ucapan tersimpan persistent dan terlihat oleh semua pengunjung, aktifkan
-penyimpanan bersama dengan **Firebase Realtime Database** (frontend tetap vanilla
-JS — hanya `fetch` REST biasa):
+Supaya ucapan tersimpan persistent dan terlihat oleh semua pengunjung, gunakan
+**Cloud Firestore** (sudah terhubung lewat blok `<script type="module">` di
+`index.html` — frontend tetap vanilla JS tanpa build step):
 
 1. Buat proyek di <https://console.firebase.google.com> (paket gratis Spark, tanpa kartu kredit).
-2. Buat Realtime Database, pilih lokasi `asia-southeast1` (Singapura).
-3. Di tab **Rules**, tempel aturan berikut, lalu Publish:
+2. Buka **Firestore Database** → **Create database**, lalu buat collection `wishes`.
+3. Satu dokumen ucapan berbentuk **hanya dua field**:
 
-```json
-{
-  "rules": {
-    "wishes": {
-      ".read": true,
-      ".indexOn": "ts",
-      "$wishId": {
-        ".write": "!data.exists()",
-        ".validate": "newData.hasChildren(['name','message','ts'])",
-        "name": {
-          ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 40"
-        },
-        "message": {
-          ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 200"
-        },
-        "ts": {
-          ".validate": "newData.isNumber()"
-        },
-        "$other": {
-          ".validate": false
-        }
-      }
+   | Field | Tipe | Ketentuan |
+   |---|---|---|
+   | `name` | string | wajib, 1–40 karakter |
+   | `wish` | string | wajib, 1–200 karakter |
+
+   (Jangan menambah field lain — aplikasi hanya menyimpan `name` dan `wish`.
+   Field `createdAt` opsional hanya untuk urutan, lihat catatan di bawah.)
+4. Di tab **Rules** Firestore, tempel aturan berikut, lalu **Publish**:
+
+```javascript
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /wishes/{wishId} {
+      allow read: if true;
+      allow create: if request.resource.data.keys().hasOnly(['name', 'wish'])
+                    && request.resource.data.name is string
+                    && request.resource.data.wish is string
+                    && request.resource.data.name.size() > 0
+                    && request.resource.data.name.size() <= 40
+                    && request.resource.data.wish.size() > 0
+                    && request.resource.data.wish.size() <= 200;
+      allow update, delete: if false;
     }
   }
 }
 ```
 
-4. Salin URL database (berakhiran `firebaseio.com` atau `firebasedatabase.app`) ke
-   `invitationData.wishes.backend.url` di `js/app.js`:
+   Efeknya: siapa pun **boleh membaca** semua ucapan dan **membuat** ucapan baru,
+   tetapi hanya dengan dua field `name` + `wish` dalam batas panjang itu — tidak
+   bisa mengubah, menghapus, atau menambah field lain dari sisi tamu.
+   **Update/delete hanya bisa dilakukan dari Firebase Console** — di sanalah
+   moderasi dilakukan: buka Firestore → collection `wishes` → pilih dokumen →
+   titik tiga (*Delete document*) untuk menghapus ucapan yang tidak pantas.
+5. Selesai — ucapan baru langsung tersimpan dan terlihat oleh semua pengunjung.
 
-```js
-wishes: {
-  seedUrl: "data/wishes.json",
-  backend: { url: "https://<proyek>-default-rtdb.asia-southeast1.firebasedatabase.app" },
-},
-```
+**Catatan urutan:** aplikasi mengurutkan ucapan dari field `createdAt` bila field
+itu ada; kalau tidak, urutan mengikuti urutan dokumen Firestore (ID otomatis)
+yang dibalik. Kalau ingin urutan yang pasti, tambahkan field `createdAt`
+(timestamp) secara manual saat menambah ucapan di Console.
 
-Selesai — ucapan baru langsung terlihat oleh semua pengunjung, dan dapat
-dihapus/dimoderasi dari Firebase Console. Selama `backend` masih `null`, situs
-tetap jalan normal dengan `data/wishes.json` saja.
+**Peran `data/wishes.json`:** file itu sekarang berperan sebagai **cadangan** bila
+Firestore tidak dapat dimuat (mis. perangkat offline, CDN diblokir, atau aturan
+keamanan belum dibuka sehingga Firestore menolak akses) — bukan sumber utama lagi.
+Saat Firestore gagal dimuat, daftar ucapan tetap tampil dari file JSON dan pesan
+status ditulis jujur di layar.
 
 ## Limitations (frontend-only by design)
 
-- Tanpa backend, ucapan yang dikirim hanya tampil untuk sesi tersebut di
-  perangkat itu — tidak disimpan di mana pun. Jika ingin persistent di semua
-  perangkat, aktifkan "Penyimpanan bersama (opsional)" di atas.
+- Selama Firestore tidak dapat dimuat (mis. aturan belum dibuka atau perangkat
+  offline), ucapan yang dikirim hanya tampil untuk sesi tersebut di perangkat itu —
+  tidak disimpan di mana pun. Ikuti "Penyimpanan bersama (Firestore)" di atas agar
+  ucapan persistent di semua perangkat.
 - Google Maps links require internet when the *user* taps them (navigation
   links only — nothing is loaded from the network by the page itself).

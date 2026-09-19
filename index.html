@@ -248,5 +248,50 @@
   <audio id="bgMusic" src="assets/audio/leberch-invitation-wedding.mp3" loop preload="none" hidden></audio>
 
   <script src="js/app.js" defer></script>
+  <script type="module">
+    // Import the functions you need from the SDKs you need
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+    import { getFirestore, collection, getDocs, addDoc } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+
+    // Your web app's Firebase configuration
+    // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+    const firebaseConfig = {
+      apiKey: "AIzaSyCUkvxdG_5UKNWn-i5sCTbFppzud0Kb158",
+      authDomain: "wedding-invitation-websi-46079.firebaseapp.com",
+      projectId: "wedding-invitation-websi-46079",
+      storageBucket: "wedding-invitation-websi-46079.firebasestorage.app",
+      messagingSenderId: "922887882557",
+      appId: "1:922887882557:web:7a2e1cd08e95a02ab36754",
+      measurementId: "G-B4B9FKGY2Q"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+
+    // Analytics opsional: kalau gagal dimuat/diblokir, ucapan JANGAN ikut mati.
+    import("https://www.gstatic.com/firebasejs/12.19.0/firebase-analytics.js")
+      .then(({ getAnalytics }) => getAnalytics(app))
+      .catch(() => {});
+
+    // Jembatan untuk js/app.js (script klasik tidak bisa import).
+    const db = getFirestore(app);
+    window.wishesBackend = {
+      kind: "firestore",
+      collection: "wishes",
+      async load() {
+        const snap = await getDocs(collection(db, "wishes"));
+        return snap.docs.map((doc) => {
+          const v = doc.data() || {};
+          const ts = v.createdAt && typeof v.createdAt.toMillis === "function" ? v.createdAt.toMillis() : null;
+          return { id: doc.id, name: v.name, wish: v.wish !== undefined ? v.wish : v.message, createdAt: ts };
+        });
+      },
+      async add(name, wish) {
+        const ref = await addDoc(collection(db, "wishes"), { name: name, wish: wish });
+        return { id: ref.id };
+      }
+    };
+    window.dispatchEvent(new Event("wishes-backend-ready"));
+  </script>
 </body>
 </html>
