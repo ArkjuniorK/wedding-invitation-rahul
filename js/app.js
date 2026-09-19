@@ -169,6 +169,51 @@ function pad2(n) {
   return String(n).padStart(2, "0");
 }
 
+/* ---------- 2b. OWNER RESOLUTION (?owner=pria|wanita|semua) ---------- */
+const OWNER_PARAM = "owner";
+const OWNER_ALIASES = {
+  pria: "groom", groom: "groom", "mempelai-pria": "groom",
+  wanita: "bride", bride: "bride", "mempelai-wanita": "bride",
+};
+
+/* "all" = tampil semua; "groom"/"bride" = satu pihak.
+   Default (tanpa param) DAN alias tak dikenal = pihak pria (keputusan pemilik undangan). */
+const DEFAULT_OWNER = "groom";
+
+function resolveOwnerKey(search) {
+  try {
+    const raw = (new URLSearchParams(search).get(OWNER_PARAM) || "").trim().toLowerCase();
+    if (!raw) return DEFAULT_OWNER;
+    if (raw === "all" || raw === "semua" || raw === "both" || raw === "gabungan") return "all";
+    return OWNER_ALIASES[raw] || DEFAULT_OWNER;
+  } catch (err) {
+    return DEFAULT_OWNER;
+  }
+}
+
+function activeOwnerKeys(ownerKey) {
+  const keys = Object.keys(invitationData.owners);
+  if (ownerKey && ownerKey !== "all" && keys.includes(ownerKey)) return [ownerKey];
+  return keys;
+}
+
+/* Acara yang tampil = shared + resepsi milik pihak yang aktif. */
+function activeEvents(ownerKey) {
+  const shared = invitationData.sharedEvents.map((ev) => ({ ...ev, ownerKey: null, host: null }));
+  const perOwner = activeOwnerKeys(ownerKey).flatMap((k) =>
+    invitationData.owners[k].events.map((ev) => ({
+      ...ev, ownerKey: k, host: invitationData.owners[k].host,
+    }))
+  );
+  return [...shared, ...perOwner];
+}
+
+function activeBanks(ownerKey) {
+  return activeOwnerKeys(ownerKey).map((k) => invitationData.owners[k]);
+}
+
+const ownerState = { key: resolveOwnerKey(window.location.search) };
+
 /* ---------- 3. GUEST PERSONALISATION (?to=) ---------- */
 function applyGuestName() {
   const el = $("#guestName");
