@@ -133,14 +133,14 @@ const invitationData = {
   ],
 
   gallery: [
-    { src: "assets/images/gallery-01.svg", alt: "Potret berdua Arkhul dan Resti di taman", ratio: "4 / 5" },
-    { src: "assets/images/gallery-02.svg", alt: "Lanskap taman lokasi akad nikah", ratio: "10 / 7" },
-    { src: "assets/images/gallery-03.svg", alt: "Detail rangkaian bunga dan cincin pernikahan", ratio: "7 / 9" },
-    { src: "assets/images/gallery-04.svg", alt: "Meja dekorasi resepsi dengan bunga dan lilin", ratio: "9 / 6.2" },
-    { src: "assets/images/gallery-05.svg", alt: "Kedua mempelai berjalan di bawah pohon", ratio: "3.8 / 4.75" },
-    { src: "assets/images/gallery-06.svg", alt: "Detail tangan mempelai dengan cincin", ratio: "11 / 7" },
-    { src: "assets/images/gallery-07.svg", alt: "Kotak cincin di atas hiasan bunga saat lamaran", ratio: "6.4 / 8.8" },
-    { src: "assets/images/gallery-08.svg", alt: "Tarian pertama di bawah lampu gantung", ratio: "9 / 6.4" },
+    { src: "assets/images/gallery1.webp", alt: "Potret berdua Arkhul dan Resti di taman", ratio: "4 / 5" },
+    { src: "assets/images/gallery2.webp", alt: "Lanskap taman lokasi akad nikah", ratio: "10 / 7" },
+    { src: "assets/images/gallery3.webp", alt: "Detail rangkaian bunga dan cincin pernikahan", ratio: "7 / 9" },
+    { src: "assets/images/gallery4.webp", alt: "Meja dekorasi resepsi dengan bunga dan lilin", ratio: "9 / 6.2" },
+    { src: "assets/images/gallery5.webp", alt: "Kedua mempelai berjalan di bawah pohon", ratio: "3.8 / 4.75" },
+    { src: "assets/images/gallery6.webp", alt: "Detail tangan mempelai dengan cincin", ratio: "11 / 7" },
+    { src: "assets/images/gallery7.webp", alt: "Kotak cincin di atas hiasan bunga saat lamaran", ratio: "6.4 / 8.8" },
+    { src: "assets/images/gallery8.webp", alt: "Tarian pertama di bawah lampu gantung", ratio: "9 / 6.4" },
   ],
 
   bank: {
