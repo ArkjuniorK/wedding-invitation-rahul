@@ -177,6 +177,14 @@ button { font: inherit; color: inherit; cursor: pointer; }
   text-wrap: balance;
 }
 .cover__date { font-size: .95rem; letter-spacing: .08em; color: #efe5cd; }
+.cover__owner {
+  font-family: var(--font-body);
+  font-size: var(--fs-eyebrow);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #efe5cd;
+  margin: 0.55rem 0 0;
+}
 .cover__to-label { margin-top: 1.2rem; font-size: .72rem; letter-spacing: .3em; text-transform: uppercase; color: #d9cba9; }
 .cover__to-prefix { font-size: .8rem; color: #d9cba9; }
 .cover__to-name {

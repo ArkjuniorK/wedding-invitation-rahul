@@ -242,6 +242,17 @@ function applyGuestName() {
   if (!guest && prefix && prefix.parentNode) prefix.parentNode.removeChild(prefix);
 }
 
+/* Label pihak muncul pada tampilan satu pihak (termasuk link default = pria),
+   dan tersembunyi pada tampilan ?owner=semua. */
+function applyOwnerLabel() {
+  const el = $("#coverOwner");
+  if (!el) return;
+  const keys = activeOwnerKeys(ownerState.key);
+  if (ownerState.key === "all" || keys.length !== 1) return;
+  el.textContent = invitationData.owners[keys[0]].host;
+  el.hidden = false;
+}
+
 /* ---------- 4. COVER / OPENING ---------- */
 function initCover() {
   const cover = $("#cover");
@@ -905,6 +916,7 @@ function initReveals() {
 /* ---------- 15. BOOT ---------- */
 function init() {
   applyGuestName();
+  applyOwnerLabel();
   initCover();
   initCountdown();
   initEvents();
