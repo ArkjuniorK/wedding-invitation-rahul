@@ -186,6 +186,28 @@ const invitationData = {
     degraded: [], // alasan bagian ucapan berjalan terbatas (tanpa console noise), mis. ["firestore"]
   },
 
+  /* Musik latar per jenis undangan. `tracks.<key>` dipetakan dari ownerState.key;
+     bila browser tidak bisa memutar format primary (mis. WebM/Opus), jatuh ke fallback.
+     `active` diisi runtime oleh initMusic() untuk keperluan verifikasi. */
+  music: {
+    volume: 0.55, /* target fade — dipakai initMusic() */
+    tracks: {
+      groom: {
+        primary: "assets/audio/groom.webm",
+        fallback: "assets/audio/leberch-invitation-wedding.mp3",
+      },
+      bride: {
+        primary: "assets/audio/bride.webm",
+        fallback: "assets/audio/leberch-invitation-wedding.mp3",
+      },
+      all: {
+        primary: "assets/audio/leberch-invitation-wedding.mp3",
+        fallback: null,
+      },
+    },
+    active: null, // diisi runtime: { key, src, used: "primary"|"fallback" }
+  },
+
   bank: {
     name: "Bank BCA",
     accountName: "Nurfadilla Resti Harisda",
@@ -1003,10 +1025,42 @@ async function initWishes() {
 }
 
 /* ---------- 12. MUSIC (DOM element, gesture-driven, fade) ---------- */
+function selectMusicTrack(audio) {
+  const cfg = invitationData.music;
+  try {
+    const tracks = cfg.tracks || {};
+    const key = tracks[ownerState.key] ? ownerState.key : tracks.all ? "all" : "groom";
+    const entry = tracks[key];
+    if (!entry || !entry.primary) return;
+
+    let chosen = entry.primary;
+    let used = "primary";
+    let webmOk = false;
+    try {
+      webmOk =
+        audio.canPlayType('audio/webm; codecs="opus"') !== "" ||
+        audio.canPlayType("audio/webm") !== "";
+    } catch (err) {
+      webmOk = false;
+    }
+    if (!webmOk && entry.fallback) {
+      chosen = entry.fallback;
+      used = "fallback";
+    }
+    audio.src = chosen;
+    cfg.active = { key: key, src: chosen, used: used };
+  } catch (err) {
+    cfg.active = null;
+  }
+}
+
 function initMusic() {
   const toggle = $("#musicToggle");
   const audio = $("#bgMusic");
   if (!toggle || !audio) return;
+
+  const musicCfg = invitationData.music;
+  selectMusicTrack(audio);
 
   audio.loop = true;
   audio.volume = 0;
@@ -1045,7 +1099,7 @@ function initMusic() {
       .play()
       .then(() => {
         setUi(true);
-        fadeTo(0.55);
+        fadeTo(musicCfg.volume);
       })
       .catch(() => {
         /* autoplay policy rejected or the asset failed — revert honestly */
