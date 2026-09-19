@@ -201,8 +201,8 @@ const invitationData = {
         fallback: "assets/audio/leberch-invitation-wedding.mp3",
       },
       all: {
-        primary: "assets/audio/leberch-invitation-wedding.mp3",
-        fallback: null,
+        primary: "assets/audio/groom.webm",
+        fallback: "assets/audio/leberch-invitation-wedding.mp3",
       },
     },
     active: null, // diisi runtime: { key, src, used: "primary"|"fallback" }

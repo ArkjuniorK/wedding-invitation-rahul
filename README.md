@@ -98,7 +98,8 @@ filenames — no layout changes needed.
 ## Assets
 
 `assets/audio/` holds three tracks: `groom.webm` and `bride.webm` (Opus, per
-jenis undangan) plus `leberch-invitation-wedding.mp3` (trek gabungan/fallback).
+jenis undangan) plus `leberch-invitation-wedding.mp3` (trek cadangan untuk semua jenis
+undangan).
 A track is only fetched when the guest first presses play (cover "Buka
 Undangan" or the music button), and it fades in/out over ~1.5 s — see
 "Musik latar per jenis undangan" below for the full mapping.
@@ -112,13 +113,13 @@ Setiap jenis undangan memutar treknya sendiri. Pemetaannya ada di
 |---|---|---|
 | `?owner=pria` (mempelai pria) | `assets/audio/groom.webm` | `assets/audio/leberch-invitation-wedding.mp3` |
 | `?owner=wanita` (mempelai wanita) | `assets/audio/bride.webm` | `assets/audio/leberch-invitation-wedding.mp3` |
-| `?owner=semua` (gabungan) | `assets/audio/leberch-invitation-wedding.mp3` | — |
+| `?owner=semua` (gabungan) | `assets/audio/groom.webm` | `assets/audio/leberch-invitation-wedding.mp3` |
 | Tanpa parameter / nilai tak dikenal | (default pria) `assets/audio/groom.webm` | `assets/audio/leberch-invitation-wedding.mp3` |
 
 **Aturan fallback:** saat halaman dibuka, `initMusic()` memeriksa dukungan
 browser dengan `audio.canPlayType('audio/webm; codecs="opus"')`. Bila browser
-tidak bisa memutar WebM/Opus (mis. sebagian Safari lama) dan trek utama bukan
-MP3, otomatis dipakai trek fallback. Tidak ada percobaan memutar dua kali —
+tidak bisa memutar WebM/Opus (mis. Safari/iOS sebelum 17.4 yang hanya bisa Opus
+di container CAF), otomatis dipakai trek `fallback` (mp3 generik). Tidak ada percobaan memutar dua kali —
 `src` ditetapkan sekali sebelum pemutaran pertama.
 
 **Cara mengganti trek:** cukup ubah nilai `primary` / `fallback` pada
