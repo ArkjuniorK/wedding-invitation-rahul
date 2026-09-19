@@ -396,7 +396,7 @@ function buildIcs(ev) {
     `DTSTAMP:${toIcsUtc(new Date().toISOString())}`,
     `DTSTART:${toIcsUtc(ev.start)}`,
     `DTEND:${toIcsUtc(ev.end)}`,
-    `SUMMARY:${icsEscape(`${ev.name} — Arkhul & Resti`)}`,
+    `SUMMARY:${icsEscape(`${ev.name} — ${ev.host || "Arkhul & Resti"}`)}`,
     `DESCRIPTION:${icsEscape(`${ev.dateLabel}. ${ev.timeLabel}. Mohon hadir tepat waktu.`)}`,
     `LOCATION:${icsEscape(`${ev.venue}, ${ev.address}`)}`,
     "END:VEVENT",
@@ -410,7 +410,7 @@ function downloadIcs(ev) {
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
-  a.download = `${ev.name.replace(/\s+/g, "-").toLowerCase()}-arkhul-resti.ics`;
+  a.download = `${ev.id}-arkhul-resti.ics`;
   document.body.append(a);
   a.click();
   a.remove();
