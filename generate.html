@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="description" content="Generator link undangan pernikahan Arkhul &amp; Resti — alat internal untuk membuat link personal per tamu.">
+  <meta name="theme-color" content="#f6f0e2">
+  <title>Generator Link Undangan — Arkhul &amp; Resti</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' fill='%23f6f0e2'/%3E%3Cpath d='M16 6 C11 12 9 17 16 24 C23 17 21 12 16 6' fill='none' stroke='%235d684f' stroke-width='1.6'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="css/generate.css">
+</head>
+<body data-js="gen-root">
+
+  <main class="gen">
+    <header class="gen__head">
+      <p class="gen__eyebrow">Alat Internal — tidak untuk tamu</p>
+      <h1 class="gen__title">Generator Link Undangan</h1>
+      <p class="gen__lede">Arkhul <span class="gen__amp">&amp;</span> Resti — buat link undangan personal per tamu. Link otomatis mengikuti alamat tempat halaman ini dibuka.</p>
+    </header>
+
+    <form class="gen__card" id="genForm" novalidate>
+      <div class="gen__field">
+        <label class="gen__label" for="guestInput">Nama Tamu Undangan</label>
+        <input
+          class="gen__input"
+          id="guestInput"
+          name="guest"
+          type="text"
+          maxlength="60"
+          placeholder="cth: Bpk. Ahmad &amp; Keluarga"
+          autocomplete="off"
+        >
+        <p class="gen__hint"><span id="guestCount">0</span>/60 karakter — kosong = sampul menampilkan &quot;Bapak/Ibu/Saudara/i&quot;</p>
+      </div>
+
+      <div class="gen__field">
+        <label class="gen__label" for="ownerSelect">Jenis Undangan</label>
+        <select class="gen__input gen__input--select" id="ownerSelect" name="owner">
+          <option value="pria" selected>Groom — undangan pihak pria (default)</option>
+          <option value="wanita">Bride — undangan pihak wanita</option>
+          <option value="semua">All — tampilkan semua acara</option>
+        </select>
+        <p class="gen__hint">Menentukan resepsi yang tampil dan trek musik latar.</p>
+      </div>
+
+      <div class="gen__field">
+        <label class="gen__label" for="linkOutput">URL Undangan</label>
+        <div class="gen__row">
+          <input class="gen__input gen__input--link" id="linkOutput" type="text" readonly>
+          <button class="gen__btn" id="copyBtn" type="button">
+            <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M15 5 H6 a1.5 1.5 0 0 0 -1.5 1.5 V15" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            Salin URL
+          </button>
+        </div>
+        <p class="gen__hint" id="copyStatus" role="status" aria-live="polite"></p>
+      </div>
+
+      <div class="gen__actions">
+        <a class="gen__btn gen__btn--ghost" id="previewLink" href="#" target="_blank" rel="noopener">Buka Pratinjau</a>
+      </div>
+    </form>
+
+    <footer class="gen__foot">
+      <p>Halaman utama: <a class="gen__footlink" href="index.html">index.html</a></p>
+      <p class="gen__hint">Tanpa nama → sampul menampilkan default. Karakter khusus otomatis di-encode.</p>
+    </footer>
+  </main>
+
+  <script src="js/generate.js" defer></script>
+</body>
+</html>
