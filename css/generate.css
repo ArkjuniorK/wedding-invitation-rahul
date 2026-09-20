@@ -1,0 +1,194 @@
+/* ==========================================================================
+   GENERATOR LINK UNDANGAN — alat internal (bukan halaman tamu)
+   Memakai token desain yang sama dengan css/style.css (editorial botanical)
+   ========================================================================== */
+
+/* ---------- 1. TOKENS (subset dari style.css, mandiri) ---------- */
+:root {
+  --color-bg: #f6f0e2;
+  --color-bg-deep: #efe6d0;
+  --color-surface: #fbf7ec;
+  --color-text: #33291e;
+  --color-muted: #6b5d49;
+  --color-accent: #5d684f;          /* muted olive */
+  --color-accent-deep: #434c39;
+  --color-accent-soft: #e7e3d2;
+  --color-border: #ddd2b8;
+  --color-on-dark: #f6f0e2;
+  --color-danger: #8a3b2e;
+
+  --font-display: "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, "Times New Roman", serif;
+  --font-body: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+
+  --radius: 2px;
+  --radius-lg: 4px;
+  --shadow-soft: 0 10px 30px -18px rgba(51, 41, 30, .35);
+}
+
+/* ---------- 2. BASE ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+body {
+  margin: 0;
+  min-height: 100vh;
+  background:
+    linear-gradient(180deg, var(--color-bg) 0%, var(--color-bg-deep) 100%);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-size: 1rem;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+h1, h2, p { margin: 0; }
+button { font: inherit; color: inherit; cursor: pointer; }
+input, select { font: inherit; }
+
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* ---------- 3. LAYOUT ---------- */
+.gen {
+  max-width: 34rem;
+  margin: 0 auto;
+  padding: clamp(2rem, 3rem + 2vw, 4rem) clamp(1.25rem, 4.5vw, 2rem) 3rem;
+}
+
+.gen__head { text-align: center; margin-bottom: 2rem; }
+
+.gen__eyebrow {
+  font-size: .72rem;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--color-gold, #7a5e32);
+  margin-bottom: .6rem;
+}
+
+.gen__title {
+  font-family: var(--font-display);
+  font-size: clamp(1.7rem, 1.3rem + 2vw, 2.4rem);
+  font-weight: 400;
+  line-height: 1.2;
+}
+
+.gen__lede {
+  color: var(--color-muted);
+  margin-top: .8rem;
+  font-size: .95rem;
+}
+
+.gen__amp { font-style: italic; font-family: var(--font-display); }
+
+/* ---------- 4. CARD & FIELDS ---------- */
+.gen__card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft);
+  padding: clamp(1.4rem, 1rem + 2vw, 2rem);
+  display: grid;
+  gap: 1.4rem;
+}
+
+.gen__field { display: grid; gap: .45rem; }
+
+.gen__label {
+  font-size: .8rem;
+  font-weight: 600;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--color-accent-deep);
+}
+
+.gen__input {
+  width: 100%;
+  padding: .7rem .85rem;
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  color: var(--color-text);
+}
+
+.gen__input:focus {
+  outline: none;
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px var(--color-accent-soft);
+}
+
+.gen__input--link {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: .85rem;
+  color: var(--color-muted);
+  background: var(--color-accent-soft);
+}
+
+.gen__hint {
+  font-size: .78rem;
+  color: var(--color-muted);
+}
+
+/* ---------- 5. ROW: link + copy ---------- */
+.gen__row {
+  display: flex;
+  gap: .6rem;
+  align-items: stretch;
+}
+
+.gen__row .gen__input--link { flex: 1; min-width: 0; }
+
+/* ---------- 6. BUTTONS ---------- */
+.gen__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .45rem;
+  padding: .7rem 1.1rem;
+  border: 1px solid var(--color-accent);
+  border-radius: var(--radius);
+  background: var(--color-accent);
+  color: var(--color-on-dark);
+  font-weight: 600;
+  font-size: .9rem;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: background .2s ease, border-color .2s ease;
+}
+
+.gen__btn:hover { background: var(--color-accent-deep); border-color: var(--color-accent-deep); }
+
+.gen__btn:disabled { opacity: .55; cursor: not-allowed; }
+
+.gen__btn--ghost {
+  background: transparent;
+  color: var(--color-accent-deep);
+}
+
+.gen__btn--ghost:hover {
+  background: var(--color-accent-soft);
+  border-color: var(--color-accent-deep);
+}
+
+.gen__actions {
+  display: flex;
+  justify-content: flex-end;
+  border-top: 1px solid var(--color-border);
+  padding-top: 1.1rem;
+}
+
+/* ---------- 7. FOOTER ---------- */
+.gen__foot {
+  margin-top: 1.6rem;
+  text-align: center;
+  font-size: .85rem;
+  color: var(--color-muted);
+}
+
+.gen__footlink { color: var(--color-accent-deep); }
+
+/* ---------- 8. RESPONSIVE ---------- */
+@media (max-width: 480px) {
+  .gen__row { flex-direction: column; }
+  .gen__actions { justify-content: stretch; }
+  .gen__actions .gen__btn { width: 100%; }
+}

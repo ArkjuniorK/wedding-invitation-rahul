@@ -59,6 +59,33 @@ Combine with a guest name: `?to=Budi%20Santoso&owner=pria`.
 The `owner` value is read from the URL only — it is never stored on the device, and each
 family simply keeps its own link. This is why the plain URL shows the groom view.
 
+## Generator link tamu (generate.html)
+
+**Halaman internal** untuk membuat link undangan personal per tamu tanpa
+menyusun query param manual:
+
+```
+https://<host>/generate.html
+```
+
+Isi **Nama Tamu Undangan**, pilih **Jenis Undangan** (Groom / Bride / All),
+lalu tekan **Salin URL**. URL yang dihasilkan memakai query yang sama dengan
+tabel di atas (`?to=<nama>&owner=<pria|wanita|semua>`) dan **otomatis mengikuti
+base URL tempat web berjalan** — `http://localhost:8099/index.html?to=...`
+saat lokal, `https://...github.io/.../index.html?to=...` saat di GitHub Pages.
+
+Detail perilaku:
+
+- Nama dibatasi 60 karakter (batas yang sama dengan `?to=`) dan di-encode
+  otomatis via `URLSearchParams` — karakter seperti `&`, `#`, `<` aman dan
+  selalu ditampilkan sebagai teks (`textContent`), tidak pernah `innerHTML`.
+- Nama kosong tidak memblokir — link tanpa `?to=` menampilkan default
+  "Bapak/Ibu/Saudara/i" pada sampul.
+- Tombol **Buka Pratinjau** membuka link hasil di tab baru untuk dicek
+  sebelum dibagikan.
+- Halaman ini `noindex, nofollow` dan tidak menaut ke halaman utama —
+  ini alat untuk pemilik undangan, bukan bagian navigasi tamu.
+
 ## Customising the content
 
 Everything editable lives in **one object at the top of [`js/app.js`](js/app.js)**:
