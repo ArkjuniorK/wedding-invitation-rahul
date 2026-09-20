@@ -197,7 +197,7 @@ const invitationData = {
         fallback: "assets/audio/leberch-invitation-wedding.mp3",
       },
       bride: {
-        primary: "assets/audio/bride.webm",
+        primary: "assets/audio/bride.mp3",
         fallback: "assets/audio/leberch-invitation-wedding.mp3",
       },
       all: {

@@ -97,7 +97,7 @@ filenames — no layout changes needed.
 
 ## Assets
 
-`assets/audio/` holds three tracks: `groom.webm` and `bride.webm` (Opus, per
+`assets/audio/` holds three tracks: `groom.webm` and `bride.mp3` (Opus, per
 jenis undangan) plus `leberch-invitation-wedding.mp3` (trek cadangan untuk semua jenis
 undangan).
 A track is only fetched when the guest first presses play (cover "Buka
@@ -112,7 +112,7 @@ Setiap jenis undangan memutar treknya sendiri. Pemetaannya ada di
 | Jenis undangan | Trek utama (primary) | Fallback |
 |---|---|---|
 | `?owner=pria` (mempelai pria) | `assets/audio/groom.webm` | `assets/audio/leberch-invitation-wedding.mp3` |
-| `?owner=wanita` (mempelai wanita) | `assets/audio/bride.webm` | `assets/audio/leberch-invitation-wedding.mp3` |
+| `?owner=wanita` (mempelai wanita) | `assets/audio/bride.mp3` | `assets/audio/leberch-invitation-wedding.mp3` |
 | `?owner=semua` (gabungan) | `assets/audio/groom.webm` | `assets/audio/leberch-invitation-wedding.mp3` |
 | Tanpa parameter / nilai tak dikenal | (default pria) `assets/audio/groom.webm` | `assets/audio/leberch-invitation-wedding.mp3` |
 
