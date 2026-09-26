@@ -48,8 +48,9 @@ const invitationData = {
           start: "2026-10-10T10:00:00+08:00",
           end: "2026-10-10T23:00:00+08:00", // praktis "sampai larut malam" (lihat plan §8 no. 2)
           venue: "Bulutanah, Kab. Bone",
-          address:
-            "Jl. Poros Sinjai-Palattae, Cangkano, Desa Bulutanah, Kec. Kajuara, Kab. Bone",
+          address: "Jl. Poros Sinjai-Palattae, Cangkano, Desa Bulutanah, Kec. Kajuara, Kab. Bone",
+          latitude: -5.066166,
+          longitude: 120.214316
         },
       ],
       bank: {
@@ -96,6 +97,7 @@ const invitationData = {
       end: "2026-10-08T12:00:00+08:00",
       venue: "Sudiang, Kota Makassar",
       address: "Jl. Bahagia No. 56 Lr 1, Kelurahan Sudiang, Kota Makassar",
+
     },
     {
       id: "resepsi",
@@ -106,8 +108,9 @@ const invitationData = {
       start: "2026-10-10T10:00:00+08:00",
       end: "2026-10-10T14:00:00+08:00",
       venue: "Bulutanah, Kab. Bone",
-      address:
-        "Jl. Poros Sinjai-Palattae, Cangkano, Desa Bulutanah, Kec. Kajuara, Kab. Bone",
+      address: "Jl. Poros Sinjai-Palattae, Cangkano, Desa Bulutanah, Kec. Kajuara, Kab. Bone",
+      latitude: -5.066166,
+     longitude: 120.214316
     },
   ],
 
@@ -443,6 +446,9 @@ function initEvents() {
     const mapBtn = document.createElement("a");
     mapBtn.className = "btn btn--primary btn--sm";
     mapBtn.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${ev.venue}, ${ev.address}`)}`;
+    if (ev.latitude && ev.longitude) {
+      mapBtn.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${ev.latitude}, ${ev.longitude}`)}`;
+    }
     mapBtn.target = "_blank";
     mapBtn.rel = "noopener";
     mapBtn.setAttribute(
